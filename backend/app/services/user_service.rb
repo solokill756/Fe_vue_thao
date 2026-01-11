@@ -74,6 +74,18 @@ class UserService
     Result.failure({ error: e.message })
   end
 
+  # Upload avatar
+
+  def upload_avatar(user, file)
+    return Result.failure({ avatar: ['No file uploaded'] }) if file.blank?
+
+    uploaded_file = Cloudinary::Uploader.upload(file)
+    user.update(photo_url: uploaded_file['secure_url'])
+    Result.success({ avatar: uploaded_file['secure_url'] })
+  rescue StandardError => e
+    Result.failure({ avatar: [e.message] })
+  end
+
   def forget_password(email)
     user = User.find_by(email:)
     return Result.failure({ error: 'User not found' }) if user.nil?

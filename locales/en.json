@@ -250,5 +250,17 @@
       },
       "errorTitle": "Error Loading Classes"
     }
+  },
+  "loading": {
+    "savingChanges": "Saving changes...",
+    "studentProfile": "Loading student profile..."
+  },
+  "toast": {
+    "fileTooLarge": "File is too large. Maximum 5MB",
+    "invalidFileType": "Please select an image file",
+    "avatarUploaded": "Avatar uploaded successfully",
+    "uploadError": "Upload failed. Please try again",
+    "profileUpdated": "Profile updated successfully",
+    "errorSavingChanges": "Error saving changes. Please try again"
   }
 }

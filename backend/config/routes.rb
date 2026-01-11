@@ -13,12 +13,15 @@ Rails.application.routes.draw do
       get 'admin/pending-users', to: 'admins#pending_users'
       post 'admin/approve-user', to: 'admins#approve_user'
       post 'admin/reject-user', to: 'admins#reject_user'
-      
       # Users
-      resources :users
+      resources :users do
+        patch 'profile', to: 'users#update_profile', on: :collection
+        post 'upload_avatar', to: 'users#upload_avatar', on: :collection
+      end
       resources :teachers
       resources :students do
-        
+        get 'profile', to: 'students#user_profile', on: :collection
+        patch 'profile', to: 'students#change_profile', on: :collection
       end
       resources :parents do
         resources :parent_student_links, only: [:index, :create, :destroy]

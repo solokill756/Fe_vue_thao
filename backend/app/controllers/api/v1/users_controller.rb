@@ -38,6 +38,28 @@ module Api
         end
       end
 
+      # PATCH /api/v1/users/profile
+
+      def update_profile
+        result = UserService.new.update(@current_user, profile_params)
+
+        if result.success?
+          render_success(UserSerializer.serialize(result.data))
+        else
+          render_error(result.errors, :unprocessable_entity)
+        end
+      end
+
+      # POST /api/v1/users/upload_avatar
+      def upload_avatar
+        result = UserService.new.upload_avatar(@current_user, params[:avatar])
+        if result.success?
+          render_success(result.data)
+        else
+          render_error(result.errors, :unprocessable_entity)
+        end
+      end
+
       # DELETE /api/v1/users/:id
       def destroy
         result = UserService.new.delete(@user)
@@ -57,6 +79,10 @@ module Api
 
       def user_params
         params.require(:user).permit(:email, :name, :password)
+      end
+
+      def profile_params
+        params.require(:user).permit(:full_name, :phone_number)
       end
     end
   end

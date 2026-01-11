@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_09_093127) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_11_085800) do
   create_table "ai_conversations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "teacher_id", null: false
     t.bigint "context_class_id"
@@ -159,6 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_09_093127) do
     t.bigint "user_id"
     t.string "student_code"
     t.decimal "wallet_balance", precision: 15, scale: 2, default: "0.0"
+    t.string "address"
     t.index ["student_code"], name: "index_students_on_student_code", unique: true
     t.index ["user_id"], name: "index_students_on_user_id", unique: true
   end

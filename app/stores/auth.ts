@@ -20,6 +20,10 @@ export const useAuthStore = defineStore('auth', {
       this.token = res.data.token;
       this.user = res.data.user;
 
+      if (process.client) {
+        localStorage.setItem('auth_user', JSON.stringify(this.user));
+      }
+
       useCookie('auth_token', {
         maxAge: 60 * 60 * 24 * 7,
       }).value = this.token;
@@ -32,12 +36,42 @@ export const useAuthStore = defineStore('auth', {
       this.token = res.data.token;
       this.user = res.data.user;
 
+      if (process.client) {
+        localStorage.setItem('auth_user', JSON.stringify(this.user));
+      }
+
       useCookie('auth_token').value = this.token;
     },
 
     logout() {
       useCookie('auth_token').value = null;
+
+      if (process.client) {
+        localStorage.removeItem('auth_user');
+      }
+
       this.$reset();
+    },
+
+    initializeFromStorage() {
+      if (!process.client) return;
+
+      const userStr = localStorage.getItem('auth_user');
+
+      if (userStr) {
+        try {
+          this.user = JSON.parse(userStr);
+        } catch (error) {
+          console.error('Error parsing stored user:', error);
+          localStorage.removeItem('auth_user');
+        }
+      }
+    },
+    refreshUser(user: UserModel) {
+      this.user = user;
+      if (process.client) {
+        localStorage.setItem('auth_user', JSON.stringify(this.user));
+      }
     },
   },
 });

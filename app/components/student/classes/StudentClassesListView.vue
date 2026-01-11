@@ -1,6 +1,6 @@
 <template>
   <div class="grid md:grid-cols-2 gap-6 flex-1">
-    <StudentClassCard
+    <StudentClassesClassCard
       v-for="cls in classes"
       :key="cls.id"
       :class-code="cls.code"

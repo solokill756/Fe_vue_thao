@@ -120,6 +120,24 @@
         ></i>
         <span class="hidden lg:block">{{ t('student.menu.tuition') }}</span>
       </NuxtLink>
+
+      <!-- Profile -->
+      <NuxtLink
+        to="/student/profile"
+        :class="[
+          'flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all',
+          isActive('/student/profile')
+            ? 'bg-white/20 text-white shadow-inner border border-white/10 backdrop-blur-sm font-bold'
+            : 'text-blue-100 hover:bg-white/10 hover:text-white group',
+        ]"
+      >
+        <i
+          class="fa-solid fa-user-gear w-6 text-center group-hover:scale-110 transition-transform"
+        ></i>
+        <span class="hidden lg:block">{{
+          t('student.menu.profile', 'Hồ sơ cá nhân')
+        }}</span>
+      </NuxtLink>
     </nav>
 
     <!-- Logout -->

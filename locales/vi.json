@@ -255,5 +255,17 @@
       },
       "errorTitle": "Lỗi tải danh sách lớp học"
     }
+  },
+  "loading": {
+    "savingChanges": "Đang lưu thay đổi...",
+    "studentProfile": "Đang tải hồ sơ học sinh..."
+  },
+  "toast": {
+    "fileTooLarge": "File quá lớn. Tối đa 5MB",
+    "invalidFileType": "Vui lòng chọn file ảnh",
+    "avatarUploaded": "Upload ảnh thành công",
+    "uploadError": "Upload ảnh thất bại. Vui lòng thử lại",
+    "profileUpdated": "Cập nhật hồ sơ thành công",
+    "errorSavingChanges": "Lỗi lưu thay đổi. Vui lòng thử lại"
   }
 }
