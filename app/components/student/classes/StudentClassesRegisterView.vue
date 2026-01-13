@@ -81,7 +81,9 @@
               </h4>
               <div class="flex items-center gap-2 text-sm text-slate-500">
                 <i class="fa-solid fa-chalkboard-user text-blue-400"></i>
-                {{ course.teacher }}
+                {{
+                  course.teacher?.full_name || $t('student.classes.noTeacher')
+                }}
               </div>
             </div>
           </div>

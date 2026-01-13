@@ -34,9 +34,9 @@ class ClassSerializer
     return nil if @class.teacher.nil?
 
     {
-      id: @class.teacher.id,
-      full_name: @class.teacher.full_name,
-      email: @class.teacher.email
+      id: @class.teacher.user_id,
+      full_name: @class.teacher.user.full_name,
+      email: @class.teacher.user.email
     }
   end
 end

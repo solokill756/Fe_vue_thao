@@ -22,14 +22,12 @@ export interface PageMeta {
 
 export interface PaginationParams {
   page: number;
-  perPage: number;
-  sort?: string;
-  order?: 'asc' | 'desc';
+  per_page: number;
 }
 
 export interface PaginationInfo {
   current_page: number;
   per_page: number;
-  totals_count: number;
+  total_count: number;
   total_pages: number;
 }

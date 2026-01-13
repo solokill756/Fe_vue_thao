@@ -10,7 +10,7 @@ class ClassEnrollmentSerializer
       id: @enrollment.id,
       class_id: @enrollment.class_id,
       class_name: @enrollment.school_class&.name,
-      teacher_name: @enrollment.school_class&.teacher&.full_name,
+      teacher_name: @enrollment.school_class&.teacher&.user&.full_name,
       schedule: @enrollment.school_class&.schedule,
       student_id: @enrollment.student_id,
       student_name: @enrollment.student&.full_name,

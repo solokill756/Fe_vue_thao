@@ -14,13 +14,19 @@ export interface ClassSchedule {
   sunday?: string;
 }
 
+interface Teacher {
+  id: number;
+  full_name: string;
+  email: string;
+}
+
 export interface Class {
   id: number;
   name: string;
   subject: string;
   grade_level: string;
   fee_per_session: string | number;
-  teacher: string | null;
+  teacher: Teacher | null;
   schedule: ClassSchedule;
   student_count: number;
   created_at: string; // ISO date string

@@ -43,9 +43,7 @@ Rails.application.routes.draw do
         end
         
         # Assignments (nested under classes)
-        resources :assignments do
-          resources :submissions, only: [:index, :show, :create, :update]
-        end
+        resources :assignments
         
         # Transactions (nested under classes)
         resources :transactions, only: [:index, :create]
@@ -59,9 +57,14 @@ Rails.application.routes.draw do
       # Standalone resources
       resources :attendance_sessions, only: [:show]
       resources :attendance_records, only: [:show]
-      resources :assignments, only: [:show]
+      resources :assignments do 
+        get 'list-by-student', to: 'assignment#list_by_student', on: :collection
+      end
       resources :assignment_attachments, only: [:index, :show, :create, :destroy]
-      resources :submissions, only: [:show, :update]
+      resources :submissions, only: [:show, :update , :create] do
+        get 'list-by-student', to: 'submissions#list_by_student', on: :collection
+        get 'file-url', to: 'submissions#file_url_submission', on: :member
+      end
       resources :transactions, only: [:show, :index]
       
       # Leave Requests

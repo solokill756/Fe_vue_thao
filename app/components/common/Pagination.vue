@@ -7,7 +7,11 @@
       {{ $t('common.pagination.showing') }}
       <span class="font-bold text-slate-800">{{ startItem }}</span>
       {{ $t('common.pagination.to') }}
-      <span class="font-bold text-slate-800">{{ endItem }}</span>
+      <span class="font-bold text-slate-800">{{
+        startItem + itemsPerPage - 1 < totalItems
+          ? startItem + itemsPerPage - 1
+          : totalItems
+      }}</span>
       {{ $t('common.pagination.of') }}
       <span class="font-bold text-slate-800">{{ totalItems }}</span>
       {{ $t('common.pagination.items') }}

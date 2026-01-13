@@ -1,10 +1,31 @@
 # frozen_string_literal: true
 
-class AssignmentSerializer < ActiveModel::Serializer
-  attributes :assignment_id, :class_id, :title, :content, :due_date, :type,
-             :created_at, :updated_at
+class AssignmentSerializer
+  attr_reader :assignment
 
-  belongs_to :class
-  has_many :assignment_attachments
-  has_many :submissions
+  def initialize(assignment, student)
+    @assignment = assignment
+    @student = student
+  end
+
+  def serialize
+    {
+      id: assignment.id,
+      title: assignment.title,
+      content: assignment.content,
+      due_date: assignment.due_date,
+      school_class: assignment&.school_class,
+      teacher_name: assignment&.school_class&.teacher&.user&.full_name,
+      submission_status: assignment.submission_status_for_student(@student),
+      assignment_attachments: assignment.assignment_attachments
+    }
+  end
+
+  def self.serialize_collection(assignments, student)
+    assignments.map { |assignment| new(assignment, student).serialize }
+  end
+
+  def self.serialize(assignment, student)
+    new(assignment, student).serialize
+  end
 end

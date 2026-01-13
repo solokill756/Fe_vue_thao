@@ -65,7 +65,7 @@ const {
       pagination: {
         current_page: 1,
         per_page: 20,
-        totals_count: 0,
+        total_count: 0,
         total_pages: 0,
       },
     }),
@@ -107,7 +107,7 @@ const {
       pagination: {
         current_page: 1,
         per_page: 20,
-        totals_count: 0,
+        total_count: 0,
         total_pages: 0,
       },
     }),
@@ -138,7 +138,7 @@ const availableTotalPages = computed(
 );
 
 const availableTotalItems = computed(
-  () => availableClasses.value?.pagination?.totals_count || 0
+  () => availableClasses.value?.pagination?.total_count || 0
 );
 
 // Computed properties for my classes pagination
@@ -147,6 +147,6 @@ const myClassesTotalPages = computed(
 );
 
 const myClassesTotalItems = computed(
-  () => studentClassesData.value?.pagination?.totals_count || 0
+  () => studentClassesData.value?.pagination?.total_count || 0
 );
 </script>

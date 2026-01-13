@@ -5,7 +5,7 @@ class Teacher < ApplicationRecord
   self.primary_key = 'user_id'
 
   # Associations
-  belongs_to :user, primary_key: 'user_id'
+  belongs_to :user
   belongs_to :package, optional: true
   has_many :classes, dependent: :destroy
   has_many :ai_conversations, dependent: :destroy
