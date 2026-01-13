@@ -12,6 +12,8 @@ class Student < ApplicationRecord
   has_many :parent_student_links, dependent: :destroy
   has_many :parents, through: :parent_student_links, source: :parent
   has_many :leave_requests, dependent: :destroy
+  has_many :tuition_invoices, dependent: :destroy
+  has_many :transactions, through: :user
 
   # Validations
   validates :user_id, uniqueness: true

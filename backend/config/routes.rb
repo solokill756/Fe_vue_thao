@@ -77,6 +77,12 @@ Rails.application.routes.draw do
       resources :ai_conversations do
         resources :ai_messages, only: [:index, :create]
       end
+
+      # Tuition Management
+      resources :tuition_invoices, only: [:index, :show, :create, :update, :destroy]
+      get 'tuition-dashboard', to: 'tuition_dashboard#show'
+      post 'payments/process', to: 'payments#process_payment'
+      get 'payments/history', to: 'payments#history'
     end
   end
 end

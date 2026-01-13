@@ -1,63 +1,67 @@
-import type { Ref } from 'vue';
+import { ref, onMounted } from 'vue'
+import type { Ref } from 'vue'
+import { useTuitionApi } from './useTuitionApi'
 
 interface StudentClass {
-  timeStart: string;
-  subject: string;
-  teacher: string;
-  room: string;
-  status: 'dropped' | 'live' | 'upcoming';
+  timeStart: string
+  subject: string
+  teacher: string
+  room: string
+  status: 'dropped' | 'live' | 'upcoming'
 }
 
 export interface Assignment {
-  title: string;
-  class: string;
-  dueDate: string;
-  isUrgent: boolean;
-  status: string;
+  title: string
+  class: string
+  dueDate: string
+  isUrgent: boolean
+  status: string
 }
 
 export interface Tuition {
-  package: string;
-  expiryDate: string;
-  debt: string;
+  totalPendingDebt: number
+  nextDueDate: string
+  debt: string
 }
 
 export interface StudentInfo {
-  name: string;
-  avatar: string;
-  class: string;
+  name: string
+  avatar: string
+  class: string
 }
 
 export interface DashboardData {
-  student: StudentInfo;
-  classes: StudentClass[];
-  assignments: Assignment[];
-  tuition: Tuition;
+  student: StudentInfo
+  classes: StudentClass[]
+  assignments: Assignment[]
+  tuition: Tuition
   stats: Array<{
-    icon: string;
-    color: string;
-    title: string;
-    value: string;
-    subtitle: string;
-  }>;
+    icon: string
+    color: string
+    title: string
+    value: string
+    subtitle: string
+  }>
 }
 
 export const useDashboard = (): {
-  debugMode: Ref<boolean>;
-  studentInfo: Ref<StudentInfo>;
-  todayClasses: Ref<StudentClass[]>;
-  pendingAssignments: Ref<Assignment[]>;
-  tuitionData: Ref<Tuition>;
-  stats: Ref<DashboardData['stats']>;
+  debugMode: Ref<boolean>
+  studentInfo: Ref<StudentInfo>
+  todayClasses: Ref<StudentClass[]>
+  pendingAssignments: Ref<Assignment[]>
+  tuitionData: Ref<Tuition>
+  stats: Ref<DashboardData['stats']>
 } => {
-  const debugMode = ref(false);
+  const { getTuitionDashboard } = useTuitionApi()
+  const debugMode = ref(false)
 
   const studentInfo = ref<StudentInfo>({
     name: 'Trần Văn Minh',
-    avatar:
-      'https://ui-avatars.com/api/?name=Tran+Minh&background=2563EB&color=fff',
+    avatar: 'https://ui-avatars.com/api/?name=Tran+Minh&background=2563EB&color=fff',
     class: 'Học sinh Lớp 12',
-  });
+  })
+
+  const todayClasses = ref<StudentClass[]>([
 
   const todayClasses = ref<StudentClass[]>([
     {
