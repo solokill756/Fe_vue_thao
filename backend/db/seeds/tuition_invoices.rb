@@ -2,6 +2,9 @@
 # Run: rails db:seed
 
 User.find_each do |user|
+  # Only create tuition invoices for users with student profile
+  next unless user.respond_to?(:student) && user.student
+
   student = user.student
   next unless student
 

@@ -94,6 +94,7 @@ teacher_users.each_with_index do |user, index|
   Teacher.create!(
     user_id: user.user_id,
     bio: data[:bio],
+    qr_code: "QR-#{user.user_id}",
     package_id: data[:package_id],
     package_expiry: data[:package_expiry],
     rating_avg: data[:rating_avg]

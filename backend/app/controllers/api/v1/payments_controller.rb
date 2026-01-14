@@ -2,94 +2,77 @@
 
 module Api
   module V1
-    class PaymentsController < ApplicationController
-      before_action :authenticate_user!
-      before_action :set_student
-      before_action :set_invoice, only: [:process_payment]
-
+    class PaymentsController < Api::V1::BaseController
       # POST /api/v1/payments/process
       def process_payment
-        payment_result = process_tuition_payment(@invoice, payment_params)
-        
+        invoice = TuitionInvoice.find_by(invoice_code: payment_params[:invoice_code])
+        return render_error({ error: 'Invoice not found' }, :not_found) unless invoice
+
+        payment_result = process_tuition_payment(invoice, payment_params)
+
         if payment_result[:success]
-          render json: {
-            success: true,
-            transaction_id: payment_result[:transaction_id],
-            status: 'completed',
-            message: 'Thanh toán thành công!'
-          }, status: :ok
+          render_success(
+            { transaction_id: payment_result[:transaction_id] },
+            :ok
+          )
         else
-          render json: {
-            success: false,
-            message: payment_result[:error]
-          }, status: :unprocessable_entity
+          render_error({ error: payment_result[:error] }, :unprocessable_entity)
         end
       end
 
       # GET /api/v1/payments/history
       def history
-        transactions = @student.transactions.recent.paginate(page: params[:page], per_page: 20)
-        render json: {
-          data: serialize_transactions(transactions),
-          pagination: {
-            current_page: transactions.current_page,
-            total_pages: transactions.total_pages,
-            total_count: transactions.total_count
-          }
-        }
+        student = @current_user.student_profile
+        return render_error({ error: 'Student profile not found' }, :not_found) unless student
+
+        transactions = TransactionService.new.get_student_transactions(student.id)
+        if transactions.success?
+          transactions = transactions.data
+          result = paginate(transactions, { per_page: query_params[:per_page] || 20, page: query_params[:page] || 1 })
+          render_success(
+            {
+              transactions: TransactionSerializer.serialize_collection(result[:records]),
+              pagination: result[:pagination]
+            },
+            :ok
+          )
+        else
+          render_error(transactions.errors, :bad_request)
+        end
       end
 
       private
-
-      def set_student
-        @student = current_user.student
-        render json: { error: 'Student profile not found' }, status: :not_found unless @student
-      end
-
-      def set_invoice
-        @invoice = TuitionInvoice.find_by(invoice_code: params[:invoice_id])
-        render json: { error: 'Invoice not found' }, status: :not_found unless @invoice
-      end
 
       def process_tuition_payment(invoice, params)
         return { success: false, error: 'Invoice already paid' } if invoice.paid?
         return { success: false, error: 'Invalid payment method' } unless valid_payment_method?(params[:method])
 
-        # Create transaction record
-        transaction = create_payment_transaction(invoice, params)
+        # Convert amount to BigDecimal to ensure proper type
+        amount = params[:amount].present? ? BigDecimal(params[:amount].to_s) : invoice.amount
 
-        if transaction.save
+        transaction_params = {
+          amount: amount,
+          method: params[:method],
+          type: 'tuition_fee',
+          status: 'pending',
+          payment_date: Date.current,
+          description: invoice.title
+        }
+
+        result = TransactionService.new.record(invoice.id, transaction_params)
+
+        if result.success?
           invoice.mark_as_paid!
-          @student.add_to_wallet(-invoice.amount) if should_deduct_from_wallet?(params[:method])
-          
-          { success: true, transaction_id: transaction.id }
+          { success: true, transaction_id: result.data.id }
         else
-          { success: false, error: 'Payment processing failed' }
+          { success: false, error: result.errors }
         end
       end
 
-      def create_payment_transaction(invoice, params)
-        Transaction.new(
-          user_id: @student.user_id,
-          amount: invoice.amount,
-          payment_date: Date.current,
-          type: 'tuition_fee',
-          method: params[:method],
-          status: 'completed',
-          description: invoice.title
-        )
-      end
+     
 
       def valid_payment_method?(method)
         %w[cash transfer online_gateway].include?(method)
-      end
-
-      def should_deduct_from_wallet?(method)
-        method == 'wallet'
-      end
-
-      def payment_params
-        params.require(:payment).permit(:method, :notes)
       end
 
       def serialize_transactions(transactions)
@@ -99,9 +82,17 @@ module Api
             title: txn.description || 'Thanh toán học phí',
             date: txn.payment_date.strftime('%d/%m/%Y'),
             amount: txn.amount.to_i,
-            status: 'success'
+            status: txn.status
           }
         end
+      end
+
+      def payment_params
+        params.require(:payment).permit(:method,  :invoice_code , :amount) 
+      end
+
+      def query_params
+        params.permit(:page, :per_page)
       end
     end
   end

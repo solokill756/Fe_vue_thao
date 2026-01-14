@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class Transaction < ApplicationRecord
+  # Disable STI for this model since we use 'type' column for transaction type
+  self.inheritance_column = :_type_disabled
+
   # Associations
-  belongs_to :user
-  belongs_to :class, class_name: 'SchoolClass',
-                     optional: true
+  belongs_to :tuition_invoice
 
   # Validations
   validates :amount, presence: true
@@ -25,8 +26,6 @@ class Transaction < ApplicationRecord
   scope :pending, -> { where(status: 'pending') }
   scope :tuition_payments, -> { where(type: 'tuition_fee') }
   scope :package_payments, -> { where(type: 'package_subscription') }
-  scope :by_user, ->(user_id) { where(user_id:) }
-  scope :by_class, ->(class_id) { where(class_id:) }
   scope :recent, -> { order(created_at: :desc) }
   scope :between_dates, lambda { |start_date, end_date|
                           where(created_at: start_date..end_date)

@@ -27,7 +27,7 @@
       <!-- Right Column (1/3) -->
       <div class="space-y-8">
         <!-- Tuition Alert -->
-        <StudentTuitionAlert :tuition="tuitionData" />
+        <TuitionAlert :tuition="tuitionData" />
 
         <!-- Teacher Feedback -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-blue-100">

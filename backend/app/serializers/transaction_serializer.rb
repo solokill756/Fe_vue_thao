@@ -8,15 +8,12 @@ class TransactionSerializer
   def serialize
     {
       id: @transaction.id,
-      student_id: @transaction.student_id,
-      student_name: @transaction.student.full_name,
-      class_id: @transaction.class_id,
-      class_name: @transaction.class.name,
+      tuition_invoice_id: @transaction.tuition_invoice_id,
       amount: @transaction.amount,
       payment_date: @transaction.payment_date,
-      payment_method: @transaction.payment_method,
+      method: @transaction.method,
       status: @transaction.status,
-      note: @transaction.note,
+      description: @transaction.description,
       created_at: @transaction.created_at,
       updated_at: @transaction.updated_at
     }
@@ -24,5 +21,12 @@ class TransactionSerializer
 
   def self.serialize(transaction)
     new(transaction).serialize
+  end
+
+  def self.serialize_collection(transactions)
+    return [] if transactions.nil? || transactions.empty?
+    transaction_array = transactions.is_a?(Array) ? transactions : transactions.to_a
+    return [] if transaction_array.empty?
+    transaction_array.map { |transaction| new(transaction).serialize }
   end
 end

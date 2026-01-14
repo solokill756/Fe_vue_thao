@@ -22,7 +22,9 @@ module Api
       def subjects
         subjects = SchoolClass.distinct.pluck(:subject)
         render_success({ subjects: subjects }, :ok)
-      end
+      end 
+
+     
 
       private
 

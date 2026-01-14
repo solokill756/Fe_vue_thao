@@ -33,13 +33,16 @@
       <p
         class="text-blue-50 text-sm mb-5 leading-relaxed bg-white/10 p-3 rounded-lg border border-white/10"
       >
-        Bạn có {{ formatCurrency(totalPendingDebt) }} nợ học phí. Hạn thanh toán: {{ nextDueDate }}
+        Bạn có {{ formatCurrency(totalPendingDebt) }} nợ học phí. Hạn thanh
+        toán: {{ nextDueDate }}
       </p>
 
       <!-- Amount -->
       <div class="flex items-center justify-between mb-5">
         <span class="text-xs text-blue-100 font-medium">Tổng nợ</span>
-        <span class="font-bold text-2xl tracking-tight">{{ formatCurrency(totalPendingDebt) }}</span>
+        <span class="font-bold text-2xl tracking-tight">{{
+          formatCurrency(totalPendingDebt)
+        }}</span>
       </div>
 
       <!-- Payment Button -->
@@ -54,22 +57,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 interface TuitionAlertProps {
-  totalPendingDebt: number
-  nextDueDate: string
+  totalPendingDebt: number;
+  nextDueDate: string;
 }
 
 const props = withDefaults(defineProps<TuitionAlertProps>(), {
   totalPendingDebt: 0,
-  nextDueDate: 'N/A'
-})
+  nextDueDate: 'N/A',
+});
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND'
-  }).format(value)
-}
+    currency: 'VND',
+  }).format(value);
+};
 </script>

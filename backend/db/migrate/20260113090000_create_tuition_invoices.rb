@@ -10,7 +10,7 @@ class CreateTuitionInvoices < ActiveRecord::Migration[7.0]
       t.string :status, default: 'pending' # pending, paid, overdue
       t.date :due_date, null: false
       t.datetime :paid_date
-      t.string :invoice_code, null: false, unique: true
+      t.string :invoice_code, null: false
 
       t.timestamps
     end

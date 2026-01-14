@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class TransactionService
-  def record(student_id, class_id, params)
-    transaction = Transaction.new(student_id:, class_id:,
+  def record(tuition_invoice_id, params)
+    transaction = Transaction.new(tuition_invoice_id:,
                                   **params)
 
     if transaction.save
@@ -11,6 +11,7 @@ class TransactionService
       Result.failure(transaction.errors.messages)
     end
   rescue StandardError => e
+    Rails.logger.error("Transaction creation error: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     Result.failure({ error: e.message })
   end
 
@@ -34,20 +35,9 @@ class TransactionService
     Result.failure({ error: e.message })
   end
 
-  def get_student_transactions(student_id)
-    transactions = Transaction.where(student_id:).order(payment_date: :desc)
+  def get_student_transactions(user_id)
+    transactions = Transaction.joins(:tuition_invoice).where(tuition_invoices: { student_id: user_id }).order(created_at: :desc)
     Result.success(transactions)
-  rescue StandardError => e
-    Result.failure({ error: e.message })
-  end
-
-  def get_revenue(class_id, month = nil, year = nil)
-    query = Transaction.where(class_id:).where(status: 'Completed')
-
-    query = query.by_month(month, year) if month && year
-
-    total = query.sum(:amount)
-    Result.success({ total:, count: query.count })
   rescue StandardError => e
     Result.failure({ error: e.message })
   end

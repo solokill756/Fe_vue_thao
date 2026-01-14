@@ -1,38 +1,4 @@
 {
-  "common": {
-    "welcome": "Chào mừng",
-    "logout": "Đăng xuất",
-    "login": "Đăng nhập",
-    "password": "Mật khẩu",
-    "email": "Email",
-    "rememberMe": "Ghi nhớ tôi",
-    "forgotPassword": "Quên mật khẩu?",
-    "signUp": "Đăng ký",
-    "loading": "Đang tải...",
-    "error": "Lỗi",
-    "success": "Thành công",
-    "cancel": "Hủy",
-    "submit": "Gửi",
-    "save": "Lưu",
-    "delete": "Xóa",
-    "edit": "Chỉnh sửa",
-    "back": "Quay lại",
-    "pagination": {
-      "showing": "Hiển thị",
-      "to": "đến",
-      "of": "trên tổng cộng",
-      "items": "mục",
-      "previous": "Trước",
-      "next": "Tiếp",
-      "itemsPerPage": "Mục trên mỗi trang"
-    },
-    "errors": {
-      "networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.",
-      "serverError": "Lỗi máy chủ. Vui lòng thử lại sau."
-    },
-    "logoutSuccess": "Bạn đã đăng xuất thành công.",
-    "logoutError": "Đã xảy ra lỗi trong quá trình đăng xuất. Vui lòng thử lại."
-  },
   "auth": {
     "messages": {
       "fillAllFields": "Vui lòng điền vào tất cả các trường bắt buộc.",
@@ -217,7 +183,50 @@
       "important": "Quan trọng",
       "message": "Gói học {package} của bạn sắp hết hạn vào ngày {expiryDate}.",
       "amountDue": "Số tiền cần đóng",
-      "payNow": "Thanh toán ngay"
+      "payNow": "Thanh toán ngay",
+      "manager": {
+        "tabs": {
+          "pending": "Chờ thanh toán",
+          "history": "Lịch sử giao dịch"
+        },
+        "emptyPending": "Bạn không có khoản phí nào cần đóng.",
+        "dueDate": "Hạn chót:",
+        "payButton": "Thanh toán",
+        "loadingHistory": "Đang tải lịch sử giao dịch...",
+        "errorLoadingHistory": "Không thể tải lịch sử giao dịch",
+        "retry": "Thử lại",
+        "emptyHistory": "Chưa có giao dịch nào",
+        "tableHeaders": {
+          "transactionCode": "Mã GD",
+          "content": "Nội dung",
+          "paymentDate": "Ngày thanh toán",
+          "amount": "Số tiền",
+          "status": "Trạng thái"
+        },
+        "paymentModal": {
+          "title": "Thanh toán Học phí",
+          "qrInstruction": "Quét mã QR bằng ứng dụng ngân hàng để thanh toán.",
+          "content": "Nội dung:",
+          "transactionCode": "Mã giao dịch:",
+          "totalAmount": "Tổng tiền:",
+          "confirmPayment": "Xác nhận đã chuyển khoản",
+          "processing": "Đang xử lý...",
+          "success": "Thành công!",
+          "successToast": "Thanh toán thành công! Hóa đơn đã được cập nhật.",
+          "errorToast": "Thanh toán thất bại. Vui lòng thử lại."
+        },
+        "statusLabels": {
+          "paid": "Đã thanh toán",
+          "pending": "Chờ thanh toán",
+          "overdue": "Quá hạn"
+        },
+        "transactionStatusLabels": {
+          "completed": "Thành công",
+          "pending": "Đang xử lý",
+          "failed": "Thất bại"
+        },
+        "defaultTransactionDescription": "Thanh toán học phí"
+      }
     },
     "feedback": {
       "title": "Nhận xét mới",
@@ -306,5 +315,152 @@
     "uploadError": "Upload ảnh thất bại. Vui lòng thử lại",
     "profileUpdated": "Cập nhật hồ sơ thành công",
     "errorSavingChanges": "Lỗi lưu thay đổi. Vui lòng thử lại"
+  },
+  "teacher": {
+    "portal": "Cổng thông tin Giáo viên",
+    "role": "Giáo viên",
+    "debugMode": "Hiện khung Component",
+    "developingFeature": "Chức năng đang phát triển...",
+    "nav": {
+      "dashboard": "Tổng quan",
+      "classes": "Quản lý Lớp",
+      "attendance": "Điểm danh",
+      "grading": "Chấm bài",
+      "finance": "Quản lý Học phí",
+      "ai": "Trợ lý AI (VIP)"
+    },
+    "actions": {
+      "createClass": "Tạo lớp mới",
+      "markAttendance": "Điểm danh",
+      "view": "Xem chi tiết",
+      "handleNow": "Xử lý ngay",
+      "newAssignment": "Bài tập mới",
+      "save": "Lưu"
+    },
+    "dashboard": {
+      "totalStudents": "Tổng học sinh",
+      "thisMonth": "+12 tháng này",
+      "activeClasses": "Lớp đang dạy",
+      "classesDescription": "Toán 10, Toán 11, Luyện thi",
+      "outstandingTuition": "Học phí tồn đọng",
+      "studentsWithDebt": "học sinh chưa đóng",
+      "assignmentsToGrade": "Bài cần chấm",
+      "deadlineToday": "Deadline hôm nay",
+      "todaySchedule": "Lịch dạy hôm nay",
+      "noClassesToday": "Không có lớp học hôm nay",
+      "aiSuggestion": "Thầy ơi, lớp Toán 12A có 3 bạn điểm thấp liên tiếp. Thầy có muốn tôi soạn tin nhắn nhắc nhở phụ huynh không?"
+    },
+    "attendance": {
+      "selectClass": "Chọn lớp học",
+      "totalStudents": "Sĩ số",
+      "student": "Học sinh",
+      "present": "Có mặt",
+      "absentExcused": "Vắng CP",
+      "absentUnexcused": "Vắng KP",
+      "late": "Đi muộn",
+      "note": "Ghi chú",
+      "enterNote": "Nhập ghi chú...",
+      "save": "Lưu điểm danh"
+    },
+    "finance": {
+      "monthlyCollection": "Tình hình thu học phí - Tháng 1/2024",
+      "allClasses": "Tất cả lớp",
+      "collected": "Đã thu",
+      "outstanding": "Chưa thu",
+      "outstandingList": "Danh sách nợ học phí",
+      "remindAll": "Nhắc tất cả",
+      "noOutstanding": "Không có khoản nợ nào",
+      "debt": "Nợ",
+      "dueDate": "Hạn",
+      "reminderSent": "Đã gửi nhắc nhở",
+      "remindersSent": "Đã gửi nhắc nhở tới tất cả",
+      "send": "Gửi"
+    },
+    "classes": {
+      "noClasses": "Bạn chưa có lớp học nào",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa lớp này không?",
+      "searchPlaceholder": "Tìm kiếm lớp học...",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Đang hoạt động",
+      "ended": "Đã kết thúc",
+      "schedule": "Lịch học",
+      "room": "Phòng",
+      "students": "Sĩ số",
+      "studentList": "DS Học sinh",
+      "createNewClass": "Tạo lớp học mới",
+      "className": "Tên lớp học",
+      "classNamePlaceholder": "Ví dụ: Toán Luyện Thi 12A",
+      "grade": "Khối lớp",
+      "selectGrade": "Chọn khối",
+      "maxStudents": "Sĩ số tối đa",
+      "subject": "Môn học",
+      "subjectPlaceholder": "Ví dụ: Toán",
+      "schedulePlaceholder": "Ví dụ: Mon, Wed, Fri 17:30-19:00",
+      "roomPlaceholder": "P.302 hoặc Online",
+      "description": "Mô tả",
+      "descriptionPlaceholder": "Mô tả về lớp học...",
+      "create": "Tạo lớp",
+      "fillAllFields": "Vui lòng điền đầy đủ thông tin",
+      "editComingSoon": "Tính năng chỉnh sửa đang được phát triển",
+      "viewStudentsComingSoon": "Tính năng xem danh sách học sinh đang được phát triển"
+    },
+    "grading": {
+      "selectClass": "Chọn lớp học",
+      "selectAssignment": "Chọn bài tập",
+      "newAssignment": "Tạo bài tập mới",
+      "student": "Học sinh",
+      "score": "Điểm",
+      "comment": "Nhận xét",
+      "status": "Trạng thái",
+      "graded": "Đã chấm",
+      "pending": "Chưa chấm",
+      "selectAssignmentFirst": "Vui lòng chọn bài tập trước"
+    },
+    "ai": {
+      "title": "Teacher AI Assistant",
+      "description": "Hỗ trợ soạn bài, phân tích dữ liệu",
+      "greeting": "Chào thầy! Em có thể giúp thầy:\n- Soạn nhận xét học sinh\n- Thống kê điểm số\n- Gợi ý bài tập về nhà\nThầy cần hỗ trợ gì không ạ?",
+      "suggestion1": "Soạn nhận xét cho em An (điểm 9)",
+      "suggestion2": "Danh sách học sinh vắng > 2 buổi",
+      "enterPrompt": "Nhập yêu cầu của thầy...",
+      "mockResponse": "Em hiểu rồi. Em sẽ hỗ trợ thầy ngay."
+    }
+  },
+  "common": {
+    "welcome": "Chào mừng",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "password": "Mật khẩu",
+    "email": "Email",
+    "rememberMe": "Ghi nhớ tôi",
+    "forgotPassword": "Quên mật khẩu?",
+    "signUp": "Đăng ký",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "submit": "Gửi",
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "back": "Quay lại",
+    "students": "học sinh",
+    "actions": "Hành động",
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trên tổng cộng",
+      "items": "mục",
+      "previous": "Trước",
+      "next": "Tiếp",
+      "itemsPerPage": "Mục trên mỗi trang"
+    },
+    "errors": {
+      "networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.",
+      "serverError": "Lỗi máy chủ. Vui lòng thử lại sau."
+    },
+    "logoutSuccess": "Bạn đã đăng xuất thành công.",
+    "logoutError": "Đã xảy ra lỗi trong quá trình đăng xuất. Vui lòng thử lại."
   }
 }

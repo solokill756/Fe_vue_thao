@@ -11,8 +11,7 @@ class SchoolClass < ApplicationRecord
   has_many :attendance_sessions, foreign_key: 'class_id', dependent: :destroy, inverse_of: :school_class
   has_many :attendance_records, through: :attendance_sessions
   has_many :assignments, foreign_key: 'class_id', dependent: :destroy, inverse_of: :school_class
-  has_many :transactions, foreign_key: 'class_id', dependent: :destroy,
-                          inverse_of: :school_class
+  has_many :tuition_invoices, foreign_key: 'class_id', dependent: :destroy
   has_many :ai_conversations, foreign_key: 'context_class_id',
                               dependent: :destroy, inverse_of: :school_class
   has_many :leave_requests, foreign_key: 'class_id', dependent: :destroy, inverse_of: :school_class

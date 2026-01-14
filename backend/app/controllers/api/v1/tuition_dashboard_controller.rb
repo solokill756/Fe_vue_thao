@@ -2,8 +2,7 @@
 
 module Api
   module V1
-    class TuitionDashboardController < ApplicationController
-      before_action :authenticate_user!
+    class TuitionDashboardController < Api::V1::BaseController
       before_action :set_student
 
       # GET /api/v1/tuition-dashboard

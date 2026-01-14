@@ -32,4 +32,25 @@ class ClassService
   rescue StandardError => e
     Result.failure({ error: e.message })
   end
+
+  def teacher_classes(teacher_id)
+    classes = SchoolClass.where(teacher_id:)
+    Result.success(classes)
+  rescue StandardError => e
+    Result.failure({ error: e.message })
+  end
+  
+  def student_of_class(class_id)
+    students = Student.joins(:enrollments).where(enrollments: { class_id: })
+    Result.success(students)
+  rescue StandardError => e
+    Result.failure({ error: e.message })
+  end
+
+  def class_subjects(class_id)
+    subjects = SchoolClass.where(id: class_id).pluck(:subject)
+    Result.success(subjects)
+  rescue StandardError => e
+    Result.failure({ error: e.message })
+  end
 end

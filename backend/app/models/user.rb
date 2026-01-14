@@ -11,7 +11,6 @@ class User < ApplicationRecord
                             dependent: :destroy
   has_many :parent_student_links, foreign_key: 'parent_id', dependent: :destroy, inverse_of: :parent
   has_many :linked_students, through: :parent_student_links, source: :student
-  has_many :transactions, dependent: :destroy
   has_many :ai_conversations, foreign_key: 'teacher_id', dependent: :destroy, inverse_of: :teacher
 
   # Validations

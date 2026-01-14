@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_13_064756) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -149,7 +149,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_064756) do
     t.index ["class_id"], name: "index_leave_requests_on_class_id"
     t.index ["leave_type"], name: "index_leave_requests_on_leave_type"
     t.index ["status"], name: "index_leave_requests_on_status"
-    t.index ["student_id", "date"], name: "index_leave_requests_on_student_and_date"
     t.index ["student_id", "date"], name: "index_leave_requests_on_student_and_date_unique", unique: true
     t.index ["student_id"], name: "index_leave_requests_on_student_id"
   end
@@ -217,12 +216,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_064756) do
     t.decimal "rating_avg", precision: 3, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "qr_code"
     t.index ["package_id"], name: "index_teachers_on_package_id"
+    t.index ["qr_code"], name: "index_teachers_on_qr_code", unique: true
   end
 
   create_table "transactions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "class_id", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
     t.date "payment_date", null: false
     t.string "status", default: "Completed"
@@ -231,11 +230,30 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_064756) do
     t.string "type"
     t.string "method"
     t.string "description"
-    t.index ["class_id"], name: "index_transactions_on_class_id"
+    t.bigint "tuition_invoice_id"
     t.index ["created_at"], name: "index_transactions_on_created_at"
     t.index ["payment_date"], name: "index_transactions_on_payment_date"
-    t.index ["user_id", "class_id"], name: "index_transactions_on_user_id_and_class_id"
-    t.index ["user_id"], name: "index_transactions_on_user_id"
+    t.index ["tuition_invoice_id", "status"], name: "index_transactions_on_tuition_invoice_id_and_status"
+    t.index ["tuition_invoice_id"], name: "index_transactions_on_tuition_invoice_id"
+  end
+
+  create_table "tuition_invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "student_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.string "status", default: "pending"
+    t.date "due_date", null: false
+    t.datetime "paid_date"
+    t.string "invoice_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "class_id"
+    t.index ["class_id"], name: "index_tuition_invoices_on_class_id"
+    t.index ["due_date"], name: "index_tuition_invoices_on_due_date"
+    t.index ["invoice_code"], name: "index_tuition_invoices_on_invoice_code", unique: true
+    t.index ["student_id", "status"], name: "index_tuition_invoices_on_student_id_and_status"
+    t.index ["student_id"], name: "index_tuition_invoices_on_student_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -283,6 +301,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_064756) do
   add_foreign_key "submissions", "students"
   add_foreign_key "teachers", "packages"
   add_foreign_key "teachers", "users", primary_key: "user_id"
-  add_foreign_key "transactions", "classes"
-  add_foreign_key "transactions", "users"
+  add_foreign_key "transactions", "tuition_invoices"
+  add_foreign_key "tuition_invoices", "classes"
+  add_foreign_key "tuition_invoices", "students"
 end

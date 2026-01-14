@@ -35,7 +35,7 @@
       </NuxtLink>
 
       <!-- Schedule -->
-      <NuxtLink
+      <!-- <NuxtLink
         to="/student/schedule"
         :class="[
           'flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all',
@@ -48,7 +48,7 @@
           class="fa-solid fa-calendar-days w-6 text-center group-hover:scale-110 transition-transform"
         ></i>
         <span class="hidden lg:block">{{ t('student.menu.schedule') }}</span>
-      </NuxtLink>
+      </NuxtLink> -->
 
       <!-- Classes -->
       <NuxtLink
@@ -90,7 +90,7 @@
       </NuxtLink>
 
       <!-- Results -->
-      <NuxtLink
+      <!-- <NuxtLink
         to="/student/results"
         :class="[
           'flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all',
@@ -103,7 +103,7 @@
           class="fa-solid fa-chart-pie w-6 text-center group-hover:scale-110 transition-transform"
         ></i>
         <span class="hidden lg:block">{{ t('student.menu.results') }}</span>
-      </NuxtLink>
+      </NuxtLink> -->
 
       <!-- Tuition -->
       <NuxtLink

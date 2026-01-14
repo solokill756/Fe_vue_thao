@@ -2,74 +2,85 @@
 
 module Api
   module V1
-    class TuitionInvoicesController < ApplicationController
-      before_action :authenticate_user!
-      before_action :set_student, only: [:index, :show, :create]
-      before_action :set_tuition_invoice, only: [:show, :update, :destroy]
-
+    class TuitionInvoicesController < Api::V1::BaseController
       # GET /api/v1/tuition_invoices
       def index
-        @tuition_invoices = @student.tuition_invoices.recent
-        render json: serialize_invoices(@tuition_invoices)
+        student = @current_user.student_profile
+        result = TuitionInvoiceService.new.list_by_student(student)
+
+        if result.success?
+          invoices = result.data
+          invoices = invoices.by_status(query_params[:status]) if query_params[:status].present?
+          invoices = invoices.search_by_title(query_params[:title]) if query_params[:title].present?
+          invoices = invoices.by_due_date
+          ans = paginate(invoices, { per_page: query_params[:page_size] || query_params[:per_page] || 10, page: query_params[:page] || 1 })
+          # Load records using find_by_sql to avoid ActiveRecord callbacks and associations
+          record_ids = ans[:records].pluck(:id)
+          records_array = TuitionInvoice.where(id: record_ids).order(due_date: :asc).to_a
+          render_success(
+            {
+              invoices: TuitionInvoiceSerializer.serialize_collection(records_array),
+              pagination: ans[:pagination]
+            },
+            :ok
+          )
+        else
+          render_error(result.errors, :bad_request)
+        end
       end
 
       # GET /api/v1/tuition_invoices/:id
       def show
-        render json: TuitionInvoiceSerializer.new(@tuition_invoice)
+        result = TuitionInvoiceService.new.find(params[:id], @current_user.student_profile)
+
+        if result.success?
+          render_success(TuitionInvoiceSerializer.serialize(result.data), :ok)
+        else
+          render_error(result.errors, :not_found)
+        end
       end
 
       # POST /api/v1/tuition_invoices
       def create
-        @tuition_invoice = @student.tuition_invoices.build(tuition_invoice_params)
+        result = TuitionInvoiceService.new.create(tuition_invoice_params, @current_user.student_profile, params[:class_id])
 
-        if @tuition_invoice.save
-          render json: TuitionInvoiceSerializer.new(@tuition_invoice), status: :created
+        if result.success?
+          render_success(TuitionInvoiceSerializer.serialize(result.data), :created)
         else
-          render json: error_response(@tuition_invoice.errors), status: :unprocessable_entity
+          render_error(result.errors, :unprocessable_entity)
         end
       end
 
       # PATCH/PUT /api/v1/tuition_invoices/:id
       def update
-        if @tuition_invoice.update(tuition_invoice_params)
-          render json: TuitionInvoiceSerializer.new(@tuition_invoice)
+        result = TuitionInvoiceService.new.update(params[:id], tuition_invoice_params, @current_user.student_profile)
+
+        if result.success?
+          render_success(TuitionInvoiceSerializer.serialize(result.data), :ok)
         else
-          render json: error_response(@tuition_invoice.errors), status: :unprocessable_entity
+          render_error(result.errors, :unprocessable_entity)
         end
       end
 
       # DELETE /api/v1/tuition_invoices/:id
       def destroy
-        @tuition_invoice.destroy
-        render json: { message: 'Invoice deleted successfully' }, status: :ok
+        result = TuitionInvoiceService.new.destroy(params[:id], @current_user.student_profile)
+
+        if result.success?
+          render_success({ message: 'Invoice deleted successfully' }, :ok)
+        else
+          render_error(result.errors, :not_found)
+        end
       end
 
       private
-
-      def set_student
-        @student = current_user.student
-        render json: { error: 'Student profile not found' }, status: :not_found unless @student
-      end
-
-      def set_tuition_invoice
-        @tuition_invoice = TuitionInvoice.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Invoice not found' }, status: :not_found
-      end
 
       def tuition_invoice_params
         params.require(:tuition_invoice).permit(:title, :description, :amount, :due_date, :status)
       end
 
-      def serialize_invoices(invoices)
-        {
-          data: invoices.map { |invoice| TuitionInvoiceSerializer.new(invoice).serializable_hash },
-          meta: { total: invoices.count }
-        }
-      end
-
-      def error_response(errors)
-        { errors: errors.full_messages }
+      def query_params
+        params.permit(:page, :page_size, :status, :title)
       end
     end
   end

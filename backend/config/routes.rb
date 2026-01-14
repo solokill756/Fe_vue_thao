@@ -47,11 +47,12 @@ Rails.application.routes.draw do
         
         # Transactions (nested under classes)
         resources :transactions, only: [:index, :create]
-        # Custom route
+       
         get :student_class , on: :collection, to: 'class_enrollment#student_classes'
         post 'enroll', to: 'class_enrollment#enroll_class', on: :member
         get 'subjects', to: 'classes#subjects', on: :collection
         delete 'quit', to: 'class_enrollment#quit_class', on: :member
+        post 'payments/process', to: 'payments#process_payment', on: :collection
       end
 
       # Standalone resources

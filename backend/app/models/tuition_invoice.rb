@@ -3,7 +3,8 @@
 class TuitionInvoice < ApplicationRecord
   # Associations
   belongs_to :student
-  has_many :transactions, dependent: :nullify
+  belongs_to :school_class, class_name: 'SchoolClass', foreign_key: 'class_id'
+  has_many :transactions, dependent: :destroy
 
   # Validations
   validates :title, presence: true
@@ -17,16 +18,15 @@ class TuitionInvoice < ApplicationRecord
   enum status: { pending: 'pending', paid: 'paid', overdue: 'overdue' }
 
   # Scopes
-  scope :pending, -> { where(status: 'pending') }
-  scope :paid, -> { where(status: 'paid') }
-  scope :overdue, -> { where(status: 'overdue') }
   scope :by_student, ->(student_id) { where(student_id:) }
   scope :due_before, ->(date) { where('due_date < ?', date) }
   scope :recent, -> { order(created_at: :desc) }
+  scope :by_due_date, -> {order(due_date: :asc) }
+  scope :by_status, ->(status) { where(status:) }
+  scope :search_by_title, ->(keyword) { where('title LIKE ?', "%#{keyword}%") }
 
   # Callbacks
   before_create :generate_invoice_code
-  before_save :check_overdue_status
 
   # Methods
   def mark_as_paid!(paid_date = Time.current)
@@ -37,17 +37,6 @@ class TuitionInvoice < ApplicationRecord
     update(status: 'overdue') if pending? && due_date < Date.current
   end
 
-  def paid?
-    status == 'paid'
-  end
-
-  def pending?
-    status == 'pending'
-  end
-
-  def overdue?
-    status == 'overdue'
-  end
 
   def days_until_due
     (due_date - Date.current).to_i
@@ -55,6 +44,10 @@ class TuitionInvoice < ApplicationRecord
 
   def is_overdue?
     pending? && due_date < Date.current
+  end
+
+  def not_paid?
+    status == 'pending' || status == 'overdue'
   end
 
   private
