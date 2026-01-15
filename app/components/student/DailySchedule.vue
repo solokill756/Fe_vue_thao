@@ -109,7 +109,6 @@
 </template>
 
 <script setup lang="ts">
-import type { DailyScheduleClass } from 'app/types/class';
 interface StudentClass {
   timeStart: string;
   subject: string;

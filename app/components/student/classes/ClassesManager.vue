@@ -14,6 +14,7 @@
         @request-leave="handleRequestLeave"
         @makeup-class="handleMakeupClass"
         @add-new="viewMode = 'register'"
+        @view-detail="handleViewDetail"
       />
       <!-- Pagination for My Classes -->
       <CommonPagination
@@ -68,6 +69,8 @@ import { ref, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useI18n } from 'vue-i18n';
 import type { Class, StudentClass } from 'app/types/class';
+import StudentClassDetailView from './StudentClassDetailView.vue';
+import StudentLeaveRequestModal from './StudentLeaveRequestModal.vue';
 
 interface ScheduleEvent {
   time: string;
@@ -110,7 +113,7 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const toast = useToast();
 
-const viewMode = ref<'list' | 'calendar' | 'register'>('list');
+const viewMode = ref<'list' | 'calendar' | 'register' | 'detail'>('list');
 const showLeaveModal = ref(false);
 const selectedClass = ref<StudentClass | null>(null);
 const { startLoading, stopLoading } = useLoading();
@@ -183,7 +186,10 @@ const handleRequestLeave = async (cls: StudentClass) => {
         props.refresh();
         props.refreshStudentClasses();
       } catch (error) {
-        toast.error(t('student.classes.leave.cancelError'));
+        toast.error(
+          getErrorMessage(error, 'student.classes.', t) ||
+            t('student.classes.leave.cancelError')
+        );
       } finally {
         stopLoading();
       }
@@ -209,7 +215,10 @@ const handleRegister = async (course: Class) => {
       props.refresh();
       props.refreshStudentClasses();
     } catch (error) {
-      toast.error(t('student.classes.registerError'));
+      toast.error(
+        getErrorMessage(error, 'student.classes.', t) ||
+          t('student.classes.registerError')
+      );
     }
   }
 };
@@ -233,9 +242,17 @@ const submitLeaveRequest = async (payload: {
     showLeaveModal.value = false;
     selectedClass.value = null;
   } catch (error) {
-    toast.error(t('student.classes.leave.errorSubmitting'));
+    toast.error(
+      getErrorMessage(error, 'student.classes.', t) ||
+        t('student.classes.leave.errorSubmitting')
+    );
   } finally {
     stopLoading();
   }
+};
+
+const handleViewDetail = (cls: StudentClass) => {
+  selectedClass.value = cls;
+  viewMode.value = 'detail';
 };
 </script>

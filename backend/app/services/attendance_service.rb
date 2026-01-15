@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 
 class AttendanceService
+  def list_sessions_for_student(class_id, student_id)
+    sessions = AttendanceSession
+               .where(class_id:)
+               .includes(:attendance_records)
+               .order(date: :desc)
+
+    unless Enrollment.where(class_id:, student_id:).exists?
+      return Result.failure({ error: 'Student is not enrolled in this class' })
+    end
+
+    Result.success(sessions)
+  rescue StandardError => e
+    Result.failure({ error: e.message })
+  end
+
   def record(class_id, student_id, params)
     attendance = Attendance.new(class_id:, student_id:,
                                 **params)

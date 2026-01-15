@@ -1,19 +1,21 @@
 <template>
   <div class="grid md:grid-cols-2 gap-6 flex-1">
-    <StudentClassesClassCard
-      v-for="cls in classes"
-      :key="cls.id"
-      :class-code="cls.code"
-      :class-name="cls.name"
-      :teacher="cls.teacher"
-      :schedule="cls.schedule"
-      :room="cls.room"
-      :attended="cls.attended"
-      :status="cls.status"
-      :total-sessions="cls.totalSessions"
-      @request-leave="$emit('request-leave', cls)"
-      @makeup-class="$emit('makeup-class', cls)"
-    />
+      <StudentClassesClassCard
+        v-for="cls in classes"
+        :key="cls.id"
+        :class-code="cls.code"
+        :class-name="cls.name"
+        :teacher="cls.teacher"
+        :schedule="cls.schedule"
+        :room="cls.room"
+        :attended="cls.attended"
+        :status="cls.status"
+        :total-sessions="cls.totalSessions"
+        :class-id="cls.class_id"
+        @request-leave="$emit('request-leave', cls)"
+        @makeup-class="$emit('makeup-class', cls)"
+        @view-detail="$emit('view-detail', cls)"
+      />
 
     <!-- Add New Class Card (TRIGGER) -->
     <div
@@ -49,5 +51,6 @@ defineEmits<{
   'request-leave': [cls: StudentClass];
   'makeup-class': [cls: StudentClass];
   'add-new': [];
+  'view-detail': [cls: StudentClass];
 }>();
 </script>

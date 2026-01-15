@@ -117,9 +117,14 @@
       "classes": "Lớp học",
       "assignments": "Bài tập",
       "results": "Kết quả học tập",
-      "tuition": "Học phí"
+      "tuition": "Học phí",
+      "profile": "Hồ sơ cá nhân"
     },
     "assignments": {
+      "title": "Bài tập",
+      "viewAll": "Xem tất cả",
+      "dueDate": "Hạn nộp",
+      "urgent": "Gấp",
       "myAssignments": "Bài tập của tôi",
       "manageDeadlinesAndScores": "Quản lý hạn nộp và điểm số.",
       "allSubjects": "Tất cả môn",
@@ -155,13 +160,22 @@
       "enterContentError": "Vui lòng nhập nội dung bài làm",
       "submissionSuccess": "Nộp bài thành công!",
       "submissionError": "Nộp bài thất bại. Vui lòng thử lại.",
-      "dueDate": "Hạn nộp:",
+      "dueDateLabel": "Hạn nộp:",
       "status": "Trạng thái:",
       "score": "Điểm số:",
       "back": "Quay lại",
       "teacher": "GV:",
       "classInfo": "Thông tin lớp học",
-      "noContentAvailable": "Nội dung bài làm không có sẵn."
+      "noContentAvailable": "Nội dung bài làm không có sẵn.",
+      "errors": {
+        "VALIDATION_ERROR": "Dữ liệu không hợp lệ. Vui lòng kiểm tra thông tin.",
+        "UNAUTHORIZED": "Bạn không có quyền thực hiện hành động này.",
+        "FORBIDDEN": "Hành động bị từ chối. Vui lòng liên hệ quản trị viên.",
+        "NOT_FOUND": "Không tìm thấy bài tập này.",
+        "BAD_REQUEST": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
+        "INTERNAL_ERROR": "Lỗi máy chủ. Vui lòng thử lại sau.",
+        "ERROR": "Đã xảy ra lỗi. Vui lòng thử lại."
+      }
     },
     "header": {
       "goodMorning": "Xin chào",
@@ -225,7 +239,16 @@
           "pending": "Đang xử lý",
           "failed": "Thất bại"
         },
-        "defaultTransactionDescription": "Thanh toán học phí"
+        "defaultTransactionDescription": "Thanh toán học phí",
+        "errors": {
+          "VALIDATION_ERROR": "Dữ liệu không hợp lệ. Vui lòng kiểm tra thông tin.",
+          "UNAUTHORIZED": "Bạn không có quyền thực hiện hành động này.",
+          "FORBIDDEN": "Hành động bị từ chối. Vui lòng liên hệ quản trị viên.",
+          "NOT_FOUND": "Không tìm thấy hóa đơn này.",
+          "BAD_REQUEST": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
+          "INTERNAL_ERROR": "Lỗi máy chủ. Vui lòng thử lại sau.",
+          "ERROR": "Đã xảy ra lỗi. Vui lòng thử lại."
+        }
       }
     },
     "feedback": {
@@ -234,6 +257,17 @@
       "teacher": "Cô Hoa (Toán)",
       "timeAgo": "2 giờ trước",
       "message": "\"Minh làm bài tập về nhà rất tốt, tư duy logic. Tuy nhiên cần cẩn thận phần hình học không gian nhé, em hay quên vẽ hình phụ.\""
+    },
+    "dashboard": {
+      "errors": {
+        "VALIDATION_ERROR": "Dữ liệu không hợp lệ. Vui lòng kiểm tra thông tin.",
+        "UNAUTHORIZED": "Bạn không có quyền thực hiện hành động này.",
+        "FORBIDDEN": "Hành động bị từ chối. Vui lòng liên hệ quản trị viên.",
+        "NOT_FOUND": "Không tìm thấy dữ liệu trang chủ.",
+        "BAD_REQUEST": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
+        "INTERNAL_ERROR": "Lỗi máy chủ. Vui lòng thử lại sau.",
+        "ERROR": "Đã xảy ra lỗi khi tải trang chủ. Vui lòng thử lại."
+      }
     },
     "classes": {
       "month": "1 tháng",
@@ -282,6 +316,15 @@
         "makeup": "Học bù",
         "makeupInfo": "Vui lòng liên hệ giáo viên để xếp lịch học bù."
       },
+      "errors": {
+        "VALIDATION_ERROR": "Dữ liệu không hợp lệ. Vui lòng kiểm tra thông tin.",
+        "UNAUTHORIZED": "Bạn không có quyền thực hiện hành động này.",
+        "FORBIDDEN": "Hành động bị từ chối. Vui lòng liên hệ quản trị viên.",
+        "NOT_FOUND": "Không tìm thấy lớp học này.",
+        "BAD_REQUEST": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
+        "INTERNAL_ERROR": "Lỗi máy chủ. Vui lòng thử lại sau.",
+        "ERROR": "Đã xảy ra lỗi. Vui lòng thử lại."
+      },
       "leave": {
         "title": "Xin nghỉ phép",
         "description": "Xin nghỉ phép từ lớp",
@@ -301,12 +344,75 @@
         "successMessage": "Gửi đơn xin nghỉ thành công. Chờ duyệt từ giáo viên.",
         "errorSubmitting": "Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại."
       },
-      "errorTitle": "Lỗi tải danh sách lớp học"
+      "errorTitle": "Lỗi tải danh sách lớp học",
+      "detail": {
+        "status": {
+          "active": "Đang diễn ra"
+        },
+        "sessionsAttended": "Buổi đã học",
+        "tabs": {
+          "overview": "Tổng quan",
+          "assignments": "Bài tập",
+          "attendance": "Điểm danh",
+          "grades": "Bảng điểm",
+          "documents": "Tài liệu"
+        },
+        "overview": {
+          "nextLesson": "Buổi học tiếp theo",
+          "joinOnline": "Vào Online",
+          "announcements": "Thông báo lớp học",
+          "noAnnouncements": "Chưa có thông báo nào",
+          "gradeProgress": "Tiến độ điểm số",
+          "increased": "Tăng",
+          "classAverage": "Trung bình lớp"
+        },
+        "assignments": {
+          "name": "Tên bài tập",
+          "dueDate": "Hạn nộp",
+          "status": "Trạng thái",
+          "score": "Điểm",
+          "actions": "Thao tác",
+          "submit": "Nộp bài",
+          "view": "Xem lại",
+          "noAssignments": "Chưa có bài tập nào",
+          "submitMessage": "Chức năng nộp bài đang được phát triển",
+          "viewMessage": "Chức năng xem bài tập đang được phát triển"
+        },
+        "attendance": {
+          "present": "Có mặt",
+          "excused": "Vắng có phép",
+          "unexcused": "Vắng không phép",
+          "requestLeave": "Xin nghỉ phép",
+          "history": "Lịch sử điểm danh",
+          "noRecords": "Chưa có lịch sử điểm danh"
+        },
+        "documents": {
+          "noDocuments": "Chưa có tài liệu nào",
+          "downloadMessage": "Chức năng tải tài liệu đang được phát triển"
+        },
+        "grades": {
+          "name": "Tên đầu điểm",
+          "date": "Ngày thi",
+          "score": "Điểm số",
+          "comment": "Nhận xét",
+          "noGrades": "Chưa có điểm số nào"
+        }
+      }
     }
   },
   "loading": {
     "savingChanges": "Đang lưu thay đổi...",
-    "studentProfile": "Đang tải hồ sơ học sinh..."
+    "studentProfile": "Đang tải hồ sơ học sinh...",
+    "assignments": "Đang tải bài tập...",
+    "classes": "Đang tải lớp học...",
+    "dashboard": "Đang tải trang chủ..."
+  },
+  "error": {
+    "fetchAssignments": "Không thể tải danh sách bài tập. Vui lòng thử lại.",
+    "fetchClass": "Không thể tải thông tin lớp học. Vui lòng thử lại.",
+    "assignmentNotFound": "Không tìm thấy bài tập này.",
+    "classNotFound": "Không tìm thấy lớp học này.",
+    "studentProfile": "Không thể tải hồ sơ học sinh. Vui lòng thử lại."
   },
   "toast": {
     "fileTooLarge": "File quá lớn. Tối đa 5MB",

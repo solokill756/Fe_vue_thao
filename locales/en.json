@@ -112,9 +112,14 @@
       "classes": "Classes",
       "assignments": "Assignments",
       "results": "Results",
-      "tuition": "Tuition"
+      "tuition": "Tuition",
+      "profile": "Profile"
     },
     "assignments": {
+      "title": "Assignments",
+      "viewAll": "View All",
+      "dueDate": "Due Date",
+      "urgent": "Urgent",
       "myAssignments": "My Assignments",
       "manageDeadlinesAndScores": "Manage deadlines and grades.",
       "allSubjects": "All Subjects",
@@ -150,13 +155,22 @@
       "enterContentError": "Please enter your assignment content",
       "submissionSuccess": "Submission successful!",
       "submissionError": "Submission failed. Please try again.",
-      "dueDate": "Due date:",
+      "dueDateLabel": "Due date:",
       "status": "Status:",
       "score": "Score:",
       "back": "Back",
       "teacher": "Teacher:",
       "classInfo": "Class Info",
-      "noContentAvailable": "No content available."
+      "noContentAvailable": "No content available.",
+      "errors": {
+        "VALIDATION_ERROR": "Invalid data. Please check your information.",
+        "UNAUTHORIZED": "You don't have permission to perform this action.",
+        "FORBIDDEN": "Action denied. Please contact administrator.",
+        "NOT_FOUND": "Assignment not found.",
+        "BAD_REQUEST": "Invalid request. Please try again.",
+        "INTERNAL_ERROR": "Server error. Please try again later.",
+        "ERROR": "An error occurred. Please try again."
+      }
     },
     "header": {
       "goodMorning": "Good Morning",
@@ -221,6 +235,15 @@
           "failed": "Failed"
         },
         "defaultTransactionDescription": "Payment for tuition"
+      },
+      "errors": {
+        "VALIDATION_ERROR": "Invalid data. Please check your information.",
+        "UNAUTHORIZED": "You don't have permission to perform this action.",
+        "FORBIDDEN": "Action denied. Please contact administrator.",
+        "NOT_FOUND": "Invoice not found.",
+        "BAD_REQUEST": "Invalid request. Please try again.",
+        "INTERNAL_ERROR": "Server error. Please try again later.",
+        "ERROR": "An error occurred. Please try again."
       }
     },
     "feedback": {
@@ -229,6 +252,17 @@
       "teacher": "Ms. Hoa (Math)",
       "timeAgo": "2 hours ago",
       "message": "\"You did an excellent job with your homework and have great logical thinking. However, be careful with the 3D geometry section - remember to draw auxiliary diagrams.\""
+    },
+    "dashboard": {
+      "errors": {
+        "VALIDATION_ERROR": "Invalid data. Please check your information.",
+        "UNAUTHORIZED": "You don't have permission to perform this action.",
+        "FORBIDDEN": "Action denied. Please contact administrator.",
+        "NOT_FOUND": "Dashboard data not found.",
+        "BAD_REQUEST": "Invalid request. Please try again.",
+        "INTERNAL_ERROR": "Server error. Please try again later.",
+        "ERROR": "An error occurred while loading dashboard. Please try again."
+      }
     },
     "classes": {
       "month": "1 month",
@@ -296,12 +330,84 @@
         "successMessage": "Leave request submitted successfully. Waiting for teacher approval.",
         "errorSubmitting": "An error occurred while submitting the request. Please try again."
       },
-      "errorTitle": "Error Loading Classes"
+      "errors": {
+        "VALIDATION_ERROR": "Invalid data. Please check your information.",
+        "UNAUTHORIZED": "You don't have permission to perform this action.",
+        "FORBIDDEN": "Action denied. Please contact administrator.",
+        "NOT_FOUND": "Class not found.",
+        "BAD_REQUEST": "Invalid request. Please try again.",
+        "INTERNAL_ERROR": "Server error. Please try again later.",
+        "ERROR": "An error occurred. Please try again."
+      },
+      "errorTitle": "Error Loading Classes",
+      "detail": {
+        "status": {
+          "active": "In Progress"
+        },
+        "sessionsAttended": "Sessions Attended",
+        "tabs": {
+          "overview": "Overview",
+          "assignments": "Assignments",
+          "attendance": "Attendance",
+          "grades": "Grades",
+          "documents": "Documents"
+        },
+        "overview": {
+          "nextLesson": "Next Lesson",
+          "joinOnline": "Join Online",
+          "announcements": "Class Announcements",
+          "noAnnouncements": "No announcements yet",
+          "gradeProgress": "Grade Progress",
+          "increased": "Increased",
+          "classAverage": "Class Average"
+        },
+        "assignments": {
+          "name": "Assignment Name",
+          "dueDate": "Due Date",
+          "status": "Status",
+          "score": "Score",
+          "actions": "Actions",
+          "submit": "Submit",
+          "view": "View",
+          "noAssignments": "No assignments yet",
+          "submitMessage": "Submit assignment feature is under development",
+          "viewMessage": "View assignment feature is under development"
+        },
+        "attendance": {
+          "present": "Present",
+          "excused": "Excused Absence",
+          "unexcused": "Unexcused Absence",
+          "requestLeave": "Request Leave",
+          "history": "Attendance History",
+          "noRecords": "No attendance records yet"
+        },
+        "documents": {
+          "noDocuments": "No documents yet",
+          "downloadMessage": "Download document feature is under development"
+        },
+        "grades": {
+          "name": "Grade Name",
+          "date": "Test Date",
+          "score": "Score",
+          "comment": "Comment",
+          "noGrades": "No grades yet"
+        }
+      }
     }
   },
   "loading": {
     "savingChanges": "Saving changes...",
-    "studentProfile": "Loading student profile..."
+    "studentProfile": "Loading student profile...",
+    "assignments": "Loading assignments...",
+    "classes": "Loading classes...",
+    "dashboard": "Loading dashboard..."
+  },
+  "error": {
+    "fetchAssignments": "Unable to load assignments. Please try again.",
+    "fetchClass": "Unable to load class information. Please try again.",
+    "assignmentNotFound": "Assignment not found.",
+    "classNotFound": "Class not found.",
+    "studentProfile": "Unable to load student profile. Please try again."
   },
   "toast": {
     "fileTooLarge": "File is too large. Maximum 5MB",

@@ -1,6 +1,6 @@
 import { ref, onMounted } from 'vue';
 import type { Ref } from 'vue';
-import { useTuitionApi } from './useTuitionApi';
+import { useDashboardApi } from './useDashboardApi';
 
 interface StudentClass {
   timeStart: string;
@@ -10,7 +10,7 @@ interface StudentClass {
   status: 'dropped' | 'live' | 'upcoming';
 }
 
-export interface Assignment {
+interface AssignmentDashboard {
   title: string;
   class: string;
   dueDate: string;
@@ -33,7 +33,7 @@ export interface StudentInfo {
 export interface DashboardData {
   student: StudentInfo;
   classes: StudentClass[];
-  assignments: Assignment[];
+  assignments: AssignmentDashboard[];
   tuition: Tuition;
   stats: Array<{
     icon: string;
@@ -48,128 +48,126 @@ export const useDashboard = (): {
   debugMode: Ref<boolean>;
   studentInfo: Ref<StudentInfo>;
   todayClasses: Ref<StudentClass[]>;
-  pendingAssignments: Ref<Assignment[]>;
+  pendingAssignments: Ref<AssignmentDashboard[]>;
   tuitionData: Ref<Tuition>;
   stats: Ref<DashboardData['stats']>;
+  pending: Ref<boolean>;
+  error: Ref<any>;
 } => {
-  const { getTuitionDashboard } = useTuitionApi();
+  const { getDashboard } = useDashboardApi();
   const debugMode = ref(false);
 
   const studentInfo = ref<StudentInfo>({
-    name: 'Trần Văn Minh',
-    avatar:
-      'https://ui-avatars.com/api/?name=Tran+Minh&background=2563EB&color=fff',
-    class: 'Học sinh Lớp 12',
+    name: '',
+    avatar: '',
+    class: '',
   });
 
-  const todayClasses = ref<StudentClass[]>([
-    {
-      timeStart: '17:30',
-      subject: 'Toán Cao Cấp (Đại số)',
-      teacher: 'Thầy Nguyễn Văn A',
-      room: 'P.302',
-      status: 'live',
-    },
-    {
-      timeStart: '19:15',
-      subject: 'Luyện thi IELTS',
-      teacher: 'Ms. Sarah',
-      room: 'Zoom Online',
-      status: 'upcoming',
-    },
-  ]);
-
-  const pendingAssignments = ref<Assignment[]>([
-    {
-      title: 'Bài tập Đại số tuyến tính',
-      class: 'Toán 12A',
-      dueDate: '20:00 Tối nay',
-      isUrgent: true,
-      status: 'Chưa nộp',
-    },
-    {
-      title: 'Viết lại bài luận Task 2',
-      class: 'Tiếng Anh',
-      dueDate: '09/01/2024',
-      isUrgent: false,
-      status: 'Đang làm',
-    },
-    {
-      title: 'Trắc nghiệm Vật Lý',
-      class: 'Lý 12',
-      dueDate: '10/01/2024',
-      isUrgent: false,
-      status: 'Đang làm',
-    },
-  ]);
-
+  const todayClasses = ref<StudentClass[]>([]);
+  const pendingAssignments = ref<AssignmentDashboard[]>([]);
   const tuitionData = ref<Tuition>({
-    totalPendingDebt: 2500000,
-    nextDueDate: '15/01/2024',
-    debt: '2.500.000đ',
+    totalPendingDebt: 0,
+    nextDueDate: 'N/A',
+    debt: '0đ',
   });
 
-  const stats = ref<DashboardData['stats']>([
-    {
-      icon: 'fa-user-check',
-      color: 'text-blue-600 bg-blue-100',
-      title: 'Điểm danh',
-      value: '95%',
-      subtitle: 'Vắng 1 buổi (Có phép)',
-    },
-    {
-      icon: 'fa-chart-line',
-      color: 'text-emerald-600 bg-emerald-100',
-      title: 'Điểm TB',
-      value: '8.5',
-      subtitle: 'Tăng 0.5 so với giữa kỳ',
-    },
-    {
-      icon: 'fa-book',
-      color: 'text-orange-600 bg-orange-100',
-      title: 'Bài tập',
-      value: '12',
-      subtitle: 'Đã hoàn thành tốt',
-    },
-    {
-      icon: 'fa-wallet',
-      color: 'text-purple-600 bg-purple-100',
-      title: 'Số dư ví',
-      value: '200k',
-      subtitle: 'Hạn gói: 15/02',
-    },
-  ]);
+  const stats = ref<DashboardData['stats']>([]);
+  const pending = ref(true);
+  const error = ref<any>(null);
 
-  // Load tuition data from API
-  const loadTuitionData = async () => {
+  // Load dashboard data from API
+  const loadDashboardData = async () => {
     try {
-      const response = await getTuitionDashboard();
-      if (response.data) {
+      pending.value = true;
+      error.value = null;
+      console.log('Loading dashboard data...');
+      const response = await getDashboard();
+      console.log('Dashboard API response:', response);
+
+      if (response && response.data) {
         const data = response.data;
-        tuitionData.value = {
-          totalPendingDebt: data.total_debt,
-          nextDueDate: data.next_due_date,
-          debt: `${new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-          }).format(data.total_debt)}`,
+        console.log('Dashboard data:', data);
+
+        // Update student info
+        studentInfo.value = {
+          name: data.student_info?.name || '',
+          avatar: data.student_info?.avatar || '',
+          class: data.student_info?.class || '',
         };
-        // Update stats with wallet balance
-        const walletStat = stats.value.find((s) => s.title === 'Số dư ví');
-        if (walletStat) {
-          walletStat.value = new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-          }).format(data.wallet_balance);
-        }
+
+        // Update today classes
+        todayClasses.value = data.today_classes || [];
+
+        // Update pending assignments
+        pendingAssignments.value = data.pending_assignments || [];
+
+        // Update tuition data
+        tuitionData.value = data.tuition || {
+          totalPendingDebt: 0,
+          nextDueDate: 'N/A',
+          debt: '0đ',
+        };
+
+        // Update stats
+        stats.value = data.stats || [];
+
+        console.log('Dashboard data loaded successfully:', {
+          studentInfo: studentInfo.value,
+          todayClasses: todayClasses.value.length,
+          pendingAssignments: pendingAssignments.value.length,
+          stats: stats.value.length,
+        });
+      } else {
+        console.warn('No data in response:', response);
       }
-    } catch (error) {
-      console.error('Error loading tuition data:', error);
+    } catch (err: any) {
+      console.error('Error loading dashboard data:', err);
+      error.value = err;
+
+      // Get error message using i18n
+      const { t } = useI18n();
+      const errorMessage =
+        getErrorMessage(err, 'student.dashboard.', t) ||
+        t('student.dashboard.errors.ERROR');
+      console.error('Dashboard error:', errorMessage);
+
+      // Set default values on error
+      studentInfo.value = {
+        name: 'Học sinh',
+        avatar:
+          'https://ui-avatars.com/api/?name=Student&background=2563EB&color=fff',
+        class: 'Học sinh',
+      };
+      stats.value = [
+        {
+          icon: 'fa-user-check',
+          color: 'text-blue-600 bg-blue-100',
+          title: 'Điểm danh',
+          value: 'N/A',
+          subtitle: 'Đang tải...',
+        },
+        {
+          icon: 'fa-chart-line',
+          color: 'text-emerald-600 bg-emerald-100',
+          title: 'Điểm TB',
+          value: 'N/A',
+          subtitle: 'Đang tải...',
+        },
+        {
+          icon: 'fa-book',
+          color: 'text-orange-600 bg-orange-100',
+          title: 'Bài tập',
+          value: '0',
+          subtitle: 'Đang tải...',
+        },
+      ];
+    } finally {
+      pending.value = false;
     }
   };
 
   onMounted(() => {
-    loadTuitionData();
+    loadDashboardData();
   });
 
   return {
@@ -179,5 +177,7 @@ export const useDashboard = (): {
     pendingAssignments,
     tuitionData,
     stats,
+    pending,
+    error,
   };
 };

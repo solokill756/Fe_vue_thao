@@ -38,6 +38,7 @@ export interface Assignment {
   score?: number;
   feedback?: string;
   assignment_attachments?: AssignmentAttachment[];
+  submission?: SubmissionHistory;
 }
 
 export interface SubmissionHistory {

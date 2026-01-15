@@ -159,6 +159,7 @@
 
 <script setup lang="ts">
 import { useToast } from 'vue-toastification';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -179,7 +180,9 @@ const handleLogout = () => {
     navigateTo('/auth');
   } catch (error) {
     console.error('Logout failed:', error);
-    toast.error(t('common.logoutError'));
+    toast.error(
+      getErrorMessage(error, 'common.', t) || t('common.logoutError')
+    );
   }
 };
 </script>

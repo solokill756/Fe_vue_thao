@@ -19,8 +19,10 @@ module Api
       def list_by_student
         student = @current_user.student_profile
         result = SubmissionService.new.list_by_student(student.id, query_params[:assignment_id])
+        
         if result.success?
-          submissions = result.data.recent
+          submissions = result.data.recent.includes(:assignment , :student)
+          submissions = submissions.by_class(query_params[:class_id]) if query_params[:class_id].present?
           ans = paginate(submissions, { per_page: query_params[:per_page] || 10, page: query_params[:page] || 1 })
           render_success(
             {

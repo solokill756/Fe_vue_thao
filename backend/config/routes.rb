@@ -59,7 +59,8 @@ Rails.application.routes.draw do
       resources :attendance_sessions, only: [:show]
       resources :attendance_records, only: [:show]
       resources :assignments do 
-        get 'list-by-student', to: 'assignment#list_by_student', on: :collection
+        get 'list-by-student', to: 'assignments#list_by_student', on: :collection
+        get 'list-by-class', to: 'assignments#list_by_class', on: :collection
       end
       resources :assignment_attachments, only: [:index, :show, :create, :destroy]
       resources :submissions, only: [:show, :update , :create] do
@@ -84,6 +85,9 @@ Rails.application.routes.draw do
       get 'tuition-dashboard', to: 'tuition_dashboard#show'
       post 'payments/process', to: 'payments#process_payment'
       get 'payments/history', to: 'payments#history'
+      
+      # Student Dashboard
+      get 'student-dashboard', to: 'student_dashboard#show'
     end
   end
 end

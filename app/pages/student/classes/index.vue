@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 animate-fade-in">
     <StudentClassesManager
       :classes="myClasses"
       :available-classes="availableClasses?.classes || []"
@@ -150,3 +150,20 @@ const myClassesTotalItems = computed(
   () => studentClassesData.value?.pagination?.total_count || 0
 );
 </script>
+
+<style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+</style>

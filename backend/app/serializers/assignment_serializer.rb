@@ -17,7 +17,8 @@ class AssignmentSerializer
       school_class: assignment&.school_class,
       teacher_name: assignment&.school_class&.teacher&.user&.full_name,
       submission_status: assignment.submission_status_for_student(@student),
-      assignment_attachments: assignment.assignment_attachments
+      assignment_attachments: assignment.assignment_attachments,
+      submissions: assignment.submissions.last ? SubmissionSerializer.serialize(assignment.submissions.last) : nil  
     }
   end
 

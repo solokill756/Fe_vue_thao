@@ -58,12 +58,12 @@
               <span
                 class="bg-slate-200 px-1.5 py-0.5 rounded text-[10px] font-bold"
               >
-                {{ task.class }}
+                {{ getClassName(task) }}
               </span>
               <span>
                 • {{ t('student.assignments.dueDate') }}:
                 <span :class="{ 'text-red-600 font-bold': task.isUrgent }">
-                  {{ task.dueDate }}
+                  {{ getDueDate(task) }}
                 </span>
               </span>
             </div>
@@ -74,7 +74,7 @@
         <div v-if="task.isUrgent" class="text-right">
           <span
             class="w-2 h-2 rounded-full bg-red-500 inline-block"
-            title="Gấp"
+            :title="t('student.assignments.urgent')"
           ></span>
         </div>
       </div>
@@ -83,9 +83,42 @@
 </template>
 
 <script setup lang="ts">
+import type { Assignment } from '@/types/assignment';
+
 const { t } = useI18n();
 
-defineProps<{
-  assignments: Assignment[];
+interface DashboardAssignment {
+  title: string;
+  class: string;
+  dueDate: string;
+  isUrgent: boolean;
+  status: string;
+}
+
+const props = defineProps<{
+  assignments: (Assignment | DashboardAssignment)[];
 }>();
+
+// Type guard to check if it's a DashboardAssignment
+const isDashboardAssignment = (
+  task: Assignment | DashboardAssignment
+): task is DashboardAssignment => {
+  return 'class' in task && 'dueDate' in task;
+};
+
+// Helper function to get class name from either format
+const getClassName = (task: Assignment | DashboardAssignment): string => {
+  if (isDashboardAssignment(task)) {
+    return task.class;
+  }
+  return task.school_class?.name || 'N/A';
+};
+
+// Helper function to get due date from either format
+const getDueDate = (task: Assignment | DashboardAssignment): string => {
+  if (isDashboardAssignment(task)) {
+    return task.dueDate || 'N/A';
+  }
+  return task.due_date || 'N/A';
+};
 </script>

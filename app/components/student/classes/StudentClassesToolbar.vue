@@ -54,11 +54,11 @@
 
 <script setup lang="ts">
 defineProps<{
-  viewMode: 'list' | 'calendar' | 'register';
+  viewMode: 'list' | 'calendar' | 'register' | 'detail';
 }>();
 
 defineEmits<{
-  'switch-view': [mode: 'list' | 'calendar' | 'register'];
+  'switch-view': [mode: 'list' | 'calendar' | 'register' | 'detail'];
   back: [];
 }>();
 </script>

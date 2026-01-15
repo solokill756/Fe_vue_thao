@@ -22,7 +22,7 @@ class SubmissionSerializer
       submitted_at: submission.submitted_at,
       status: submission.status,
       score: submission.score,
-      teacher_feedback: submission.teacher_feedback
+      teacher_feedback: submission.teacher_feedback,
     }
   end
 

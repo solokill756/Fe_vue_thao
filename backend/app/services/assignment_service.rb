@@ -40,6 +40,7 @@ class AssignmentService
       Result.failure({ error: 'Assignment not found' })
     end
   rescue StandardError => e
+    Rails.logger.error("Error fetching assignment by id: #{e.message}")
     Result.failure({ error: e.message })
   end
 

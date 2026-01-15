@@ -14,7 +14,7 @@
         </div>
         <div>
           <h3
-            class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors"
+            class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors cursor-pointer"
           >
             {{ className }}
           </h3>
@@ -96,7 +96,7 @@
         </button>
         <button
           v-if="status === 'active'"
-          @click="$emit('join-class')"
+          @click="navigateToDetail"
           class="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
         >
           <i class="fa-solid fa-door-open"></i>
@@ -108,7 +108,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { useRouter } from 'vue-router';
+
+const props = defineProps<{
   classCode: string;
   className: string;
   teacher: string;
@@ -117,10 +119,32 @@ defineProps<{
   attended: number;
   totalSessions: number;
   status: 'dropped' | 'pending' | 'active';
+  classId?: number;
 }>();
 
-defineEmits<{
+const router = useRouter();
+
+const navigateToDetail = () => {
+  console.log(
+    'Navigate to detail, classId:',
+    props.classId,
+    'Type:',
+    typeof props.classId
+  );
+  if (props.classId !== undefined && props.classId !== null) {
+    const classId = Number(props.classId);
+    console.log('Navigating to:', `/student/classes/${classId}`);
+    router.push(`/student/classes/${classId}`);
+  } else {
+    // Fallback to emit if classId is not provided
+    console.warn('classId not provided, emitting view-detail event');
+    emit('view-detail');
+  }
+};
+
+const emit = defineEmits<{
   'request-leave': [];
   'join-class': [];
+  'view-detail': [];
 }>();
 </script>

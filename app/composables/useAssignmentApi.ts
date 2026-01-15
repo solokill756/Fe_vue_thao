@@ -1,4 +1,4 @@
-import type { AssignmentListResponse } from '@/types/assignment';
+import type { Assignment, AssignmentListResponse } from '@/types/assignment';
 import type { ApiResponseSuccess } from '@/types/common';
 import { ref, computed } from 'vue';
 
@@ -11,6 +11,7 @@ export const useAssignmentApi = () => {
     subject?: string | null;
     title?: string;
     submission_status?: string;
+    class_id?: number;
   }) => {
     return $fetch<ApiResponseSuccess<AssignmentListResponse>>(
       `${apiBase}/assignments/list-by-student`,
@@ -22,6 +23,25 @@ export const useAssignmentApi = () => {
     );
   };
 
+  const fetchAssignmentsByClass = (
+    classId: number,
+    params?: {
+      page?: number;
+      page_size?: number;
+      subject?: string | null;
+      title?: string;
+      submission_status?: string;
+    }
+  ) => {
+    return $fetch<ApiResponseSuccess<AssignmentListResponse>>(
+      `${apiBase}/assignments/list-by-class?class_id=${classId}`,
+      {
+        method: 'GET',
+        headers: getAuthHeader(),
+        params,
+      }
+    );
+  };
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
@@ -64,30 +84,11 @@ export const useAssignmentApi = () => {
   };
 
   const fetchAssignmentDetail = (id: number) =>
-    $fetch<ApiResponseSuccess<AssignmentListResponse>>(
-      `${apiBase}/assignments/${id}`,
-      {
-        method: 'GET',
-        headers: getAuthHeader(),
-      }
-    );
+    $fetch<ApiResponseSuccess<Assignment>>(`${apiBase}/assignments/${id}`, {
+      method: 'GET',
+      headers: getAuthHeader(),
+    });
 
-  const fetchAssignmentsByClass = (
-    classId: number,
-    params?: {
-      page?: number;
-      page_size?: number;
-      title?: string;
-    }
-  ) =>
-    $fetch<ApiResponseSuccess<AssignmentListResponse>>(
-      `${apiBase}/assignments/list-by-class/${classId}`,
-      {
-        method: 'GET',
-        headers: getAuthHeader(),
-        params,
-      }
-    );
   const createAssignment = (payload: {
     title: string;
     description?: string;
@@ -130,8 +131,8 @@ export const useAssignmentApi = () => {
     formatDate,
     isUrgent,
     fetchAssignments,
-    fetchAssignmentDetail,
     fetchAssignmentsByClass,
+    fetchAssignmentDetail,
     createAssignment,
     updateAssignment,
     deleteAssignment,

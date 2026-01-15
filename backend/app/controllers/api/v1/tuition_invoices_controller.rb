@@ -13,7 +13,7 @@ module Api
           invoices = invoices.by_status(query_params[:status]) if query_params[:status].present?
           invoices = invoices.search_by_title(query_params[:title]) if query_params[:title].present?
           invoices = invoices.by_due_date
-          ans = paginate(invoices, { per_page: query_params[:page_size] || query_params[:per_page] || 10, page: query_params[:page] || 1 })
+          ans = paginate(invoices, { per_page: query_params[:per_page] || 10, page: query_params[:page] || 1 })
           # Load records using find_by_sql to avoid ActiveRecord callbacks and associations
           record_ids = ans[:records].pluck(:id)
           records_array = TuitionInvoice.where(id: record_ids).order(due_date: :asc).to_a
@@ -80,7 +80,7 @@ module Api
       end
 
       def query_params
-        params.permit(:page, :page_size, :status, :title)
+        params.permit(:page, :per_page, :status, :title, :class_id)
       end
     end
   end

@@ -607,7 +607,10 @@ const processPaymentClick = async () => {
   } catch (error) {
     btn.innerHTML = originalText;
     console.error('Payment error:', error);
-    toast.error(t('student.tuition.manager.paymentModal.errorToast'));
+    toast.error(
+      getErrorMessage(error, 'student.tuition.', t) ||
+        t('student.tuition.manager.paymentModal.errorToast')
+    );
   }
 };
 </script>

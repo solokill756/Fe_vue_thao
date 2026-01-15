@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-primary-light p-6">
+  <div class="space-y-6">
     <!-- Loading State -->
     <CommonLoadingSpinner v-if="pending" :text="t('loading.assignments')" />
 
@@ -13,8 +13,7 @@
     <!-- Content -->
     <div v-else class="space-y-6">
       <student-assignments-manager
-        :assignments="assignments?.assignments!"
-        :refetch="refetch"
+        :assignments="assignments?.assignments || []"
         :filters="{
           page,
           pageSize,
@@ -22,17 +21,15 @@
           subject,
           submission_status,
         }"
+        :history-submissions="[]"
+        :pending-history="false"
+        :error-history="null"
         @update:filters="updateFilters"
-        @update:viewMode="selectedAssignmentId = $event"
-        :history-submissions="historySubmissions?.submissions || []"
-        :pending-history="pendingHistory"
-        :error-history="errorHistory"
-        @refetch-history="refetchHistory"
+        @update:viewMode="handleViewModeChange"
       />
 
-      <!-- Pagination (Only show in list view) -->
+      <!-- Pagination -->
       <CommonPagination
-        v-if="!selectedAssignmentId"
         :current-page="assignments?.pagination.current_page || 1"
         :total-pages="assignments?.pagination.total_pages || 1"
         :items-per-page="pageSize"
@@ -45,22 +42,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+
 definePageMeta({
   layout: 'student',
   middleware: 'auth',
 });
+
 const { fetchAssignments } = useAssignmentApi();
 const { t } = useI18n();
+const router = useRouter();
+
 const page = ref(1);
 const pageSize = ref(10);
 const title = ref('');
 const subject = ref<string | null>(null);
 const submission_status = ref<string | null>(null);
-const selectedAssignmentId = ref<number | null>(null);
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
-const { fetchSubmissions } = useSubmissionApi();
+
 const {
   data: assignments,
   pending,
@@ -83,30 +84,6 @@ const {
   }
 );
 
-const {
-  data: historySubmissions,
-  pending: pendingHistory,
-  error: errorHistory,
-  refresh: refetchHistory,
-} = useAsyncData(
-  'student-history-submissions',
-  async () => {
-    console.log(
-      'Fetching history submissions for assignment',
-      selectedAssignmentId.value
-    );
-    const result = await fetchSubmissions({
-      per_page: 5,
-      page: 1,
-      assignment_id: selectedAssignmentId.value || undefined,
-    });
-    return result.data;
-  },
-  {
-    watch: [selectedAssignmentId],
-  }
-);
-
 // Debounce search to avoid excessive API calls
 watch(title, (newTitle) => {
   if (searchTimeout) clearTimeout(searchTimeout);
@@ -126,5 +103,11 @@ const updateFilters = (newFilters: {
   if (newFilters.submission_status !== undefined)
     submission_status.value = newFilters.submission_status;
   page.value = 1;
+};
+
+const handleViewModeChange = (assignmentId: number | null) => {
+  if (assignmentId) {
+    router.push(`/student/assignments/${assignmentId}`);
+  }
 };
 </script>

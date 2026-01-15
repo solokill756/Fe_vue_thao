@@ -12,6 +12,7 @@ export const useSubmissionApi = () => {
     per_page?: number;
     page?: number;
     assignment_id?: number;
+    class_id?: number;
   }) =>
     $fetch<ApiResponseSuccess<SubmissionListResponse>>(
       `${apiBase}/submissions/list-by-student`,
