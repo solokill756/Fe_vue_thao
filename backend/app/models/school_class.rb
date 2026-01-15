@@ -21,10 +21,10 @@ class SchoolClass < ApplicationRecord
   validates :subject, presence: true, length: { minimum: 2, maximum: 50 }
   validates :fee_per_session, numericality: { greater_than_or_equal_to: 0 },
                               allow_nil: true
-  validates :status, inclusion: { in: %w[active completed paused] }
+  validates :status, inclusion: { in: %w[active paused] }
 
   # Enums
-  enum status: { active: 'active', completed: 'completed', paused: 'paused' }
+  enum status: { active: 'active', paused: 'paused' }
 
   # Scopes
   scope :active_classes, -> { where(status: 'active') }

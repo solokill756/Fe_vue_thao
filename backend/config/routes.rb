@@ -88,6 +88,26 @@ Rails.application.routes.draw do
       
       # Student Dashboard
       get 'student-dashboard', to: 'student_dashboard#show'
+      
+      # Teacher Classes Management
+      post 'teacher/classes', to: 'teacher_classes#create'
+      get 'teacher/classes', to: 'teacher_classes#index'
+      get 'teacher/classes/:id', to: 'teacher_classes#show'
+      patch 'teacher/classes/:id', to: 'teacher_classes#update'
+      delete 'teacher/classes/:id', to: 'teacher_classes#destroy'
+      get 'teacher/classes/:id/pending_requests', to: 'teacher_classes#pending_requests'
+      post 'teacher/classes/:id/enrollments/:enrollment_id/approve', to: 'teacher_classes#approve_enrollment'
+      post 'teacher/classes/:id/enrollments/:enrollment_id/reject', to: 'teacher_classes#reject_enrollment'
+      post 'teacher/classes/:id/leave_requests/:leave_request_id/approve', to: 'teacher_classes#approve_leave_request'
+      post 'teacher/classes/:id/leave_requests/:leave_request_id/reject', to: 'teacher_classes#reject_leave_request'
+      post 'teacher/classes/:id/students', to: 'teacher_classes#add_student'
+      delete 'teacher/classes/:id/students/:student_id', to: 'teacher_classes#remove_student'
+      get 'teacher/classes/:id/search_students', to: 'teacher_classes#search_students'
+      get 'teacher/classes/:id/schedule', to: 'teacher_classes#schedule'
+      post 'teacher/classes/:id/attendance_sessions', to: 'teacher_classes#create_attendance_session'
+      patch 'teacher/classes/:id/attendance_sessions/:session_id', to: 'teacher_classes#update_attendance_session'
+      delete 'teacher/classes/:id/attendance_sessions/:session_id', to: 'teacher_classes#delete_attendance_session'
+      patch 'teacher/classes/:id/schedule', to: 'teacher_classes#update_schedule'
     end
   end
 end

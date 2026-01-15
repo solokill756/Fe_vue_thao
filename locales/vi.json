@@ -508,7 +508,208 @@
       "create": "Tạo lớp",
       "fillAllFields": "Vui lòng điền đầy đủ thông tin",
       "editComingSoon": "Tính năng chỉnh sửa đang được phát triển",
-      "viewStudentsComingSoon": "Tính năng xem danh sách học sinh đang được phát triển"
+      "viewStudentsComingSoon": "Tính năng xem danh sách học sinh đang được phát triển",
+
+      "createModal": {
+        "title": "Tạo lớp học mới",
+        "className": "Tên lớp học",
+        "classNamePlaceholder": "Ví dụ: Toán Luyện Thi 12A",
+        "subject": "Môn học",
+        "subjectPlaceholder": "Ví dụ: Toán, Lý, Hóa...",
+        "gradeLevel": "Khối lớp",
+        "gradeLevelPlaceholder": "VD: Lớp 10, Lớp 11...",
+        "feePerSession": "Học phí/buổi (VNĐ)",
+        "schedule": "Lịch học",
+        "to": "đến",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Nhập mô tả về lớp học (tùy chọn)...",
+        "selectDaysHint": "Chọn các ngày trong tuần để thêm lịch học",
+        "cancel": "Hủy bỏ",
+        "create": "Tạo lớp",
+        "creating": "Đang tạo...",
+        "errors": {
+          "nameRequired": "Vui lòng nhập tên lớp học",
+          "subjectRequired": "Vui lòng nhập môn học"
+        },
+        "messages": {
+          "success": "Đã tạo lớp học thành công",
+          "error": "Không thể tạo lớp học. Vui lòng thử lại"
+        }
+      },
+      "detail": {
+        "classCode": "Mã lớp",
+        "grade": "Khối",
+        "tabs": {
+          "students": "Học sinh",
+          "schedule": "Lịch học",
+          "settings": "Cài đặt"
+        }
+      },
+      "list": {
+        "loading": "Đang tải lớp học...",
+        "error": "Không thể tải danh sách lớp học. Vui lòng thử lại.",
+        "retry": "Thử lại",
+        "active": "Đang hoạt động",
+        "edit": "Chỉnh sửa"
+      },
+      "studentsTab": {
+        "pendingRequests": "Yêu cầu chờ duyệt",
+        "enrollmentRequests": "Yêu cầu tham gia lớp",
+        "leaveRequests": "Yêu cầu nghỉ học",
+        "sentAt": "Gửi lúc",
+        "approve": "Duyệt",
+        "reject": "Từ chối",
+        "type": "Loại",
+        "date": "Ngày",
+        "reason": "Lý do",
+        "temporary": "Nghỉ tạm thời",
+        "permanent": "Nghỉ vĩnh viễn",
+        "searchStudent": "Tìm học sinh...",
+        "addStudent": "Thêm học sinh",
+        "table": {
+          "fullName": "Họ và Tên",
+          "dob": "Ngày sinh",
+          "contact": "Liên lạc",
+          "parent": "Phụ huynh",
+          "actions": "Thao tác",
+          "remove": "Xóa"
+        },
+        "modal": {
+          "title": "Thêm học sinh vào lớp",
+          "searchPlaceholder": "Tìm kiếm theo tên, email hoặc mã học sinh...",
+          "searching": "Đang tìm kiếm...",
+          "noResults": "Không tìm thấy học sinh nào",
+          "enterKeyword": "Nhập từ khóa để tìm kiếm học sinh",
+          "add": "Thêm",
+          "code": "Mã",
+          "confirmReject": "Bạn có chắc chắn muốn từ chối yêu cầu này?",
+          "confirmRemove": "Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?"
+        },
+        "messages": {
+          "approveEnrollmentSuccess": "Đã duyệt yêu cầu tham gia lớp",
+          "rejectEnrollmentSuccess": "Đã từ chối yêu cầu tham gia lớp",
+          "approveLeaveSuccess": "Đã duyệt yêu cầu nghỉ học",
+          "rejectLeaveSuccess": "Đã từ chối yêu cầu nghỉ học",
+          "addStudentSuccess": "Đã thêm học sinh vào lớp",
+          "removeStudentSuccess": "Đã xóa học sinh khỏi lớp",
+          "approveError": "Không thể duyệt yêu cầu",
+          "rejectError": "Không thể từ chối yêu cầu",
+          "addError": "Không thể thêm học sinh",
+          "removeError": "Không thể xóa học sinh"
+        }
+      },
+      "scheduleTab": {
+        "fixedSchedule": "Lịch học cố định",
+        "noFixedSchedule": "Chưa có lịch học cố định",
+        "change": "Thay đổi",
+        "upcomingSessions": "Danh sách buổi học sắp tới",
+        "addSession": "Thêm buổi học",
+        "loading": "Đang tải...",
+        "noUpcomingSessions": "Chưa có buổi học sắp tới",
+        "upcoming": "Sắp diễn ra",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "modal": {
+          "editFixedSchedule": "Chỉnh sửa lịch học cố định",
+          "editSession": "Sửa buổi học",
+          "addSession": "Thêm buổi học",
+          "description": "Lịch học cố định hiện tại chỉ hỗ trợ định dạng JSON. Ví dụ: số 0 là Thứ 2, số 2 là Thứ 4, giá trị là giờ học (VD: 17:30-19:00)",
+          "scheduleJson": "Lịch học (JSON)",
+          "schedulePlaceholder": "Nhập JSON, ví dụ: số 0 là Thứ 2, số 2 là Thứ 4",
+          "sessionDate": "Ngày học",
+          "sessionTime": "Giờ học",
+          "sessionNote": "Ghi chú (tùy chọn)",
+          "notePlaceholder": "Nhập ghi chú cho buổi học...",
+          "cancel": "Hủy",
+          "save": "Lưu",
+          "update": "Cập nhật",
+          "add": "Thêm"
+        },
+        "days": {
+          "monday": "Thứ 2",
+          "tuesday": "Thứ 3",
+          "wednesday": "Thứ 4",
+          "thursday": "Thứ 5",
+          "friday": "Thứ 6",
+          "saturday": "Thứ 7",
+          "sunday": "Chủ nhật"
+        },
+        "dayShort": {
+          "monday": "TH 2",
+          "tuesday": "TH 3",
+          "wednesday": "TH 4",
+          "thursday": "TH 5",
+          "friday": "TH 6",
+          "saturday": "TH 7",
+          "sunday": "CN"
+        },
+        "messages": {
+          "noSchedule": "Chưa có lịch học",
+          "invalidDateTime": "Vui lòng nhập đầy đủ ngày và giờ",
+          "updateSessionSuccess": "Đã cập nhật buổi học",
+          "addSessionSuccess": "Đã thêm buổi học",
+          "deleteSessionSuccess": "Đã xóa buổi học",
+          "updateScheduleSuccess": "Đã cập nhật lịch học cố định",
+          "invalidJson": "Định dạng JSON không hợp lệ",
+          "saveError": "Không thể lưu buổi học",
+          "deleteError": "Không thể xóa buổi học",
+          "updateScheduleError": "Không thể cập nhật lịch học",
+          "confirmDelete": "Bạn có chắc chắn muốn xóa buổi học này?"
+        }
+      },
+      "settingsTab": {
+        "classInfo": "Thông tin lớp học",
+        "className": "Tên lớp học",
+        "required": "*",
+        "classNamePlaceholder": "Nhập tên lớp học",
+        "subject": "Môn học",
+        "subjectPlaceholder": "Nhập môn học",
+        "gradeLevel": "Khối lớp",
+        "gradeLevelPlaceholder": "VD: Lớp 10, Lớp 11...",
+        "feePerSession": "Học phí/buổi (VNĐ)",
+        "feePlaceholder": "0",
+        "status": "Trạng thái",
+        "statusActive": "Đang hoạt động",
+        "statusPaused": "Tạm dừng",
+        "classCode": "Mã lớp",
+        "description": "Mô tả / Ghi chú",
+        "descriptionPlaceholder": "Nhập mô tả hoặc ghi chú về lớp học...",
+        "coverImage": "Ảnh bìa",
+        "changeImage": "Đổi ảnh",
+        "selectImage": "Chọn ảnh từ máy",
+        "remove": "Xóa",
+        "imageFormat": "Định dạng: JPEG, PNG, WebP. Kích thước tối đa: 5MB",
+        "saving": "Đang lưu...",
+        "saveChanges": "Lưu thay đổi",
+        "dangerZone": "Vùng nguy hiểm",
+        "dangerDescription": "Hành động này sẽ xóa vĩnh viễn lớp học và tất cả dữ liệu liên quan (học sinh, bài tập, điểm danh...). Hành động này không thể hoàn tác.",
+        "deleteClass": "Xóa lớp học này",
+        "deleting": "Đang xóa...",
+        "deleteConfirm": {
+          "title": "Xác nhận xóa lớp học",
+          "description": "Hành động này không thể hoàn tác",
+          "confirmText": "Bạn có chắc chắn muốn xóa lớp học:",
+          "warning": "Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn:",
+          "items": {
+            "students": "Danh sách học sinh",
+            "assignments": "Bài tập và bài nộp",
+            "attendance": "Lịch sử điểm danh",
+            "invoices": "Hóa đơn học phí",
+            "other": "Tất cả dữ liệu khác"
+          },
+          "cancel": "Hủy",
+          "delete": "Xóa lớp học"
+        },
+        "messages": {
+          "validationError": "Vui lòng nhập đầy đủ tên lớp học và môn học",
+          "invalidImageFormat": "Định dạng ảnh không hợp lệ. Chỉ chấp nhận JPEG, PNG, WebP",
+          "imageTooLarge": "Kích thước ảnh quá lớn. Tối đa 5MB",
+          "updateSuccess": "Đã cập nhật thông tin lớp học",
+          "updateError": "Không thể cập nhật thông tin lớp học",
+          "deleteSuccess": "Đã xóa lớp học",
+          "deleteError": "Không thể xóa lớp học"
+        }
+      }
     },
     "grading": {
       "selectClass": "Chọn lớp học",

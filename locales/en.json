@@ -503,7 +503,207 @@
       "create": "Create Class",
       "fillAllFields": "Please fill in all required fields",
       "editComingSoon": "Edit feature coming soon",
-      "viewStudentsComingSoon": "View students feature coming soon"
+      "viewStudentsComingSoon": "View students feature coming soon",
+      "createModal": {
+        "title": "Create New Class",
+        "className": "Class Name",
+        "classNamePlaceholder": "e.g., Math Test Prep 12A",
+        "subject": "Subject",
+        "subjectPlaceholder": "e.g., Math, Physics, Chemistry...",
+        "gradeLevel": "Grade Level",
+        "gradeLevelPlaceholder": "e.g., Grade 10, Grade 11...",
+        "feePerSession": "Fee per Session (VND)",
+        "schedule": "Schedule",
+        "to": "to",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter class description (optional)...",
+        "selectDaysHint": "Select days of the week to add schedule",
+        "cancel": "Cancel",
+        "create": "Create Class",
+        "creating": "Creating...",
+        "errors": {
+          "nameRequired": "Please enter class name",
+          "subjectRequired": "Please enter subject"
+        },
+        "messages": {
+          "success": "Class created successfully",
+          "error": "Unable to create class. Please try again"
+        }
+      },
+      "detail": {
+        "classCode": "Class Code",
+        "grade": "Grade",
+        "tabs": {
+          "students": "Students",
+          "schedule": "Schedule",
+          "settings": "Settings"
+        }
+      },
+      "list": {
+        "loading": "Loading classes...",
+        "error": "Unable to load class list. Please try again.",
+        "retry": "Retry",
+        "active": "Active",
+        "edit": "Edit"
+      },
+      "studentsTab": {
+        "pendingRequests": "Pending Requests",
+        "enrollmentRequests": "Enrollment Requests",
+        "leaveRequests": "Leave Requests",
+        "sentAt": "Sent at",
+        "approve": "Approve",
+        "reject": "Reject",
+        "type": "Type",
+        "date": "Date",
+        "reason": "Reason",
+        "temporary": "Temporary",
+        "permanent": "Permanent",
+        "searchStudent": "Search students...",
+        "addStudent": "Add Student",
+        "table": {
+          "fullName": "Full Name",
+          "dob": "Date of Birth",
+          "contact": "Contact",
+          "parent": "Parent",
+          "actions": "Actions",
+          "remove": "Remove"
+        },
+        "modal": {
+          "title": "Add Student to Class",
+          "searchPlaceholder": "Search by name, email or student code...",
+          "searching": "Searching...",
+          "noResults": "No students found",
+          "enterKeyword": "Enter keyword to search for students",
+          "add": "Add",
+          "code": "Code",
+          "confirmReject": "Are you sure you want to reject this request?",
+          "confirmRemove": "Are you sure you want to remove this student from the class?"
+        },
+        "messages": {
+          "approveEnrollmentSuccess": "Enrollment request approved",
+          "rejectEnrollmentSuccess": "Enrollment request rejected",
+          "approveLeaveSuccess": "Leave request approved",
+          "rejectLeaveSuccess": "Leave request rejected",
+          "addStudentSuccess": "Student added to class",
+          "removeStudentSuccess": "Student removed from class",
+          "approveError": "Unable to approve request",
+          "rejectError": "Unable to reject request",
+          "addError": "Unable to add student",
+          "removeError": "Unable to remove student"
+        }
+      },
+      "scheduleTab": {
+        "fixedSchedule": "Fixed Schedule",
+        "noFixedSchedule": "No fixed schedule",
+        "change": "Change",
+        "upcomingSessions": "Upcoming Sessions",
+        "addSession": "Add Session",
+        "loading": "Loading...",
+        "noUpcomingSessions": "No upcoming sessions",
+        "upcoming": "Upcoming",
+        "edit": "Edit",
+        "delete": "Delete",
+        "modal": {
+          "editFixedSchedule": "Edit Fixed Schedule",
+          "editSession": "Edit Session",
+          "addSession": "Add Session",
+          "description": "Fixed schedule currently only supports JSON format. Example: number 0 is Monday, number 2 is Wednesday, value is class time (e.g., 17:30-19:00)",
+          "scheduleJson": "Schedule (JSON)",
+          "schedulePlaceholder": "Enter JSON, e.g., number 0 is Monday, number 2 is Wednesday",
+          "sessionDate": "Session Date",
+          "sessionTime": "Session Time",
+          "sessionNote": "Note (optional)",
+          "notePlaceholder": "Enter note for session...",
+          "cancel": "Cancel",
+          "save": "Save",
+          "update": "Update",
+          "add": "Add"
+        },
+        "days": {
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday",
+          "saturday": "Saturday",
+          "sunday": "Sunday"
+        },
+        "dayShort": {
+          "monday": "Mon",
+          "tuesday": "Tue",
+          "wednesday": "Wed",
+          "thursday": "Thu",
+          "friday": "Fri",
+          "saturday": "Sat",
+          "sunday": "Sun"
+        },
+        "messages": {
+          "noSchedule": "No schedule",
+          "invalidDateTime": "Please enter both date and time",
+          "updateSessionSuccess": "Session updated",
+          "addSessionSuccess": "Session added",
+          "deleteSessionSuccess": "Session deleted",
+          "updateScheduleSuccess": "Fixed schedule updated",
+          "invalidJson": "Invalid JSON format",
+          "saveError": "Unable to save session",
+          "deleteError": "Unable to delete session",
+          "updateScheduleError": "Unable to update schedule",
+          "confirmDelete": "Are you sure you want to delete this session?"
+        }
+      },
+      "settingsTab": {
+        "classInfo": "Class Information",
+        "className": "Class Name",
+        "required": "*",
+        "classNamePlaceholder": "Enter class name",
+        "subject": "Subject",
+        "subjectPlaceholder": "Enter subject",
+        "gradeLevel": "Grade Level",
+        "gradeLevelPlaceholder": "e.g., Grade 10, Grade 11...",
+        "feePerSession": "Fee per Session (VND)",
+        "feePlaceholder": "0",
+        "status": "Status",
+        "statusActive": "Active",
+        "statusPaused": "Paused",
+        "classCode": "Class Code",
+        "description": "Description / Notes",
+        "descriptionPlaceholder": "Enter description or notes about the class...",
+        "coverImage": "Cover Image",
+        "changeImage": "Change Image",
+        "selectImage": "Select Image from Computer",
+        "remove": "Remove",
+        "imageFormat": "Format: JPEG, PNG, WebP. Maximum size: 5MB",
+        "saving": "Saving...",
+        "saveChanges": "Save Changes",
+        "dangerZone": "Danger Zone",
+        "dangerDescription": "This action will permanently delete the class and all related data (students, assignments, attendance...). This action cannot be undone.",
+        "deleteClass": "Delete This Class",
+        "deleting": "Deleting...",
+        "deleteConfirm": {
+          "title": "Confirm Class Deletion",
+          "description": "This action cannot be undone",
+          "confirmText": "Are you sure you want to delete the class:",
+          "warning": "All related data will be permanently deleted:",
+          "items": {
+            "students": "Student list",
+            "assignments": "Assignments and submissions",
+            "attendance": "Attendance history",
+            "invoices": "Tuition invoices",
+            "other": "All other data"
+          },
+          "cancel": "Cancel",
+          "delete": "Delete Class"
+        },
+        "messages": {
+          "validationError": "Please enter both class name and subject",
+          "invalidImageFormat": "Invalid image format. Only JPEG, PNG, WebP are allowed",
+          "imageTooLarge": "Image size too large. Maximum 5MB",
+          "updateSuccess": "Class information updated",
+          "updateError": "Unable to update class information",
+          "deleteSuccess": "Class deleted",
+          "deleteError": "Unable to delete class"
+        }
+      }
     },
     "grading": {
       "selectClass": "Select Class",

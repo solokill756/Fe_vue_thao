@@ -33,6 +33,11 @@ module Api
         }
       end
 
+      def check_teacher_role
+        return if @current_user.role == 'teacher'
+        render_error 'Unauthorized access', :unauthorized
+      end
+
       private
 
       def authenticate_request!
@@ -47,6 +52,7 @@ module Api
           render_error 'Unauthorized access', :unauthorized
         end
       end
+      
     end
   end
 end
