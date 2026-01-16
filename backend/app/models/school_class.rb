@@ -13,7 +13,7 @@ class SchoolClass < ApplicationRecord
   has_many :assignments, foreign_key: 'class_id', dependent: :destroy, inverse_of: :school_class
   has_many :tuition_invoices, foreign_key: 'class_id', dependent: :destroy
   has_many :ai_conversations, foreign_key: 'context_class_id',
-                              dependent: :destroy, inverse_of: :school_class
+                              dependent: :destroy, inverse_of: :context_class
   has_many :leave_requests, foreign_key: 'class_id', dependent: :destroy, inverse_of: :school_class
 
   # Validations

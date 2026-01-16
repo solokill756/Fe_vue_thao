@@ -42,6 +42,17 @@ class Enrollment < ApplicationRecord
     (sessions_attended.to_f / school_class.attendance_sessions.count * 100).round(2)
   end
 
+  def sessions_attended_count
+    AttendanceRecord
+      .joins(attendance_session: :school_class)
+      .where(
+        attendance_sessions: { class_id: class_id },
+        student_id: student_id,
+        status: 'present'
+      )
+      .count
+  end
+
   private
 
   def unique_enrollment

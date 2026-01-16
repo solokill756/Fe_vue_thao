@@ -643,6 +643,9 @@
           "saturday": "TH 7",
           "sunday": "CN"
         },
+        "errors": {
+          "noSchedule": "Lớp học chưa có lịch học cố định"
+        },
         "messages": {
           "noSchedule": "Chưa có lịch học",
           "invalidDateTime": "Vui lòng nhập đầy đủ ngày và giờ",
@@ -654,7 +657,8 @@
           "saveError": "Không thể lưu buổi học",
           "deleteError": "Không thể xóa buổi học",
           "updateScheduleError": "Không thể cập nhật lịch học",
-          "confirmDelete": "Bạn có chắc chắn muốn xóa buổi học này?"
+          "confirmDelete": "Bạn có chắc chắn muốn xóa buổi học này?",
+          "sessionsCreated": "Đã tạo {count} buổi học cho tuần này"
         }
       },
       "settingsTab": {
@@ -709,6 +713,54 @@
           "deleteSuccess": "Đã xóa lớp học",
           "deleteError": "Không thể xóa lớp học"
         }
+      }
+    },
+    "attendance": {
+      "classLabel": "Lớp học",
+      "dateLabel": "Ngày",
+      "selectClass": "Chọn lớp",
+      "selectCustomDate": "Chọn ngày khác",
+      "searchPlaceholder": "Tìm tên học sinh...",
+      "noteHint": "* Ghi chú: CP (Có phép), KP (Không phép)",
+      "totalStudents": "Sĩ số lớp",
+      "students": "HS",
+      "markAllPresent": "Tất cả có mặt",
+      "save": "Lưu",
+      "saving": "Đang lưu...",
+      "sessions": "buổi",
+      "sessionsTooltip": "Số buổi đã học / Tổng số buổi",
+      "sessionWarning": "Sắp hết hạn gói học - Cần nhắc phí",
+      "notePlaceholder": "Ghi chú...",
+      "alertParent": "Báo PH",
+      "stats": {
+        "present": "Có mặt",
+        "late": "Đi muộn",
+        "absent": "Vắng"
+      },
+      "table": {
+        "student": "Học sinh",
+        "status": "Trạng thái",
+        "notes": "Ghi chú & Đánh giá"
+      },
+      "status": {
+        "present": "Có mặt",
+        "late": "Muộn",
+        "excused": "CP",
+        "absent": "KP"
+      },
+      "tags": {
+        "missingHomework": "Thiếu BTVN",
+        "active": "Tích cực"
+      },
+      "messages": {
+        "allMarkedPresent": "Đã đánh dấu tất cả học sinh có mặt",
+        "alertParentSent": "Đã gửi thông báo cho phụ huynh của {name}",
+        "selectClassAndDate": "Vui lòng chọn lớp và ngày",
+        "noSession": "Không tìm thấy phiên điểm danh. Vui lòng thử lại",
+        "classNotFound": "Không tìm thấy lớp học",
+        "noStudents": "Lớp học này chưa có học sinh nào",
+        "saveSuccess": "Đã lưu điểm danh thành công",
+        "saveError": "Không thể lưu điểm danh. Vui lòng thử lại"
       }
     },
     "grading": {

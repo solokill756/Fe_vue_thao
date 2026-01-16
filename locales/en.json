@@ -637,6 +637,9 @@
           "saturday": "Sat",
           "sunday": "Sun"
         },
+        "errors": {
+          "noSchedule": "Class does not have a fixed schedule"
+        },
         "messages": {
           "noSchedule": "No schedule",
           "invalidDateTime": "Please enter both date and time",
@@ -648,7 +651,8 @@
           "saveError": "Unable to save session",
           "deleteError": "Unable to delete session",
           "updateScheduleError": "Unable to update schedule",
-          "confirmDelete": "Are you sure you want to delete this session?"
+          "confirmDelete": "Are you sure you want to delete this session?",
+          "sessionsCreated": "Created {count} sessions for this week"
         }
       },
       "settingsTab": {
@@ -703,6 +707,54 @@
           "deleteSuccess": "Class deleted",
           "deleteError": "Unable to delete class"
         }
+      }
+    },
+    "attendance": {
+      "classLabel": "Class",
+      "dateLabel": "Date",
+      "selectClass": "Select Class",
+      "selectCustomDate": "Select Custom Date",
+      "searchPlaceholder": "Search student name...",
+      "noteHint": "* Note: E (Excused), U (Unexcused)",
+      "totalStudents": "Class Size",
+      "students": "students",
+      "markAllPresent": "Mark All Present",
+      "save": "Save",
+      "saving": "Saving...",
+      "sessions": "sessions",
+      "sessionsTooltip": "Sessions attended / Total sessions",
+      "sessionWarning": "Package expiring soon - Payment reminder needed",
+      "notePlaceholder": "Note...",
+      "alertParent": "Alert Parent",
+      "stats": {
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent"
+      },
+      "table": {
+        "student": "Student",
+        "status": "Status",
+        "notes": "Notes & Evaluation"
+      },
+      "status": {
+        "present": "Present",
+        "late": "Late",
+        "excused": "E",
+        "absent": "U"
+      },
+      "tags": {
+        "missingHomework": "Missing Homework",
+        "active": "Active"
+      },
+      "messages": {
+        "allMarkedPresent": "All students marked as present",
+        "alertParentSent": "Alert sent to parent of {name}",
+        "selectClassAndDate": "Please select class and date",
+        "noSession": "Attendance session not found. Please try again",
+        "classNotFound": "Class not found",
+        "noStudents": "This class has no students yet",
+        "saveSuccess": "Attendance saved successfully",
+        "saveError": "Unable to save attendance. Please try again"
       }
     },
     "grading": {

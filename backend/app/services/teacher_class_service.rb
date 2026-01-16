@@ -304,19 +304,24 @@ class TeacherClassService
     Result.failure({ error: e.message })
   end
 
-  def create_attendance_session(class_id, date, teacher_note = nil)
+  def get_or_create_attendance_session(class_id, date, time = nil, teacher_note = nil)
     class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
     return Result.failure({ error: 'Class not found' }) unless class_obj
 
-    session = AttendanceSession.new(
-      class_id: class_obj.id,
-      date: date,
-      teacher_note: teacher_note
-    )
+    parsed_date = parse_date_with_time(date, time)
 
-    if session.save
+    start_time = parsed_date - 1.second
+    end_time = parsed_date + 1.second
+    session = AttendanceSession.where(class_id: class_obj.id)
+                               .where(date: start_time..end_time)
+                               .first
+    
+    if session
+      if teacher_note.present?
+        session.update(teacher_note: teacher_note)
+      end
+      
       Result.success({ 
-        message: 'Attendance session created successfully', 
         session: { 
           id: session.id, 
           date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
@@ -325,11 +330,61 @@ class TeacherClassService
         } 
       })
     else
-      Result.failure(session.errors.messages)
+      session = AttendanceSession.new(
+        class_id: class_obj.id,
+        date: parsed_date,
+        teacher_note: teacher_note
+      )
+
+      begin
+        if session.save
+          Result.success({ 
+            session: { 
+              id: session.id, 
+              date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
+              date_display: session.date.strftime('%d/%m/%Y'),
+              time_display: session.date.strftime('%H:%M')
+            } 
+          })
+        else
+          Result.failure(session.errors.messages)
+        end
+      rescue ActiveRecord::RecordNotUnique, Mysql2::Error => e
+        # If duplicate entry error, try to find the existing session again
+        if e.message.include?('Duplicate entry')
+          existing_session = AttendanceSession.where(class_id: class_obj.id)
+                                             .where(date: start_time..end_time)
+                                             .first
+          
+          if existing_session
+            # Update teacher note if provided
+            if teacher_note.present?
+              existing_session.update(teacher_note: teacher_note)
+            end
+            
+            Result.success({ 
+              session: { 
+                id: existing_session.id, 
+                date: existing_session.date.strftime('%Y-%m-%d %H:%M:%S'),
+                date_display: existing_session.date.strftime('%d/%m/%Y'),
+                time_display: existing_session.date.strftime('%H:%M')
+              } 
+            })
+          else
+            Result.failure({ error: 'Failed to create or find attendance session' })
+          end
+        else
+          raise e
+        end
+      end
     end
   rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#create_attendance_session: #{e.message}\n#{e.backtrace.join("\n")}")
+    Rails.logger.error("Error in TeacherClassService#get_or_create_attendance_session: #{e.message}\n#{e.backtrace.join("\n")}")
     Result.failure({ error: e.message })
+  end
+
+  def create_attendance_session(class_id, date, time = nil, teacher_note = nil)
+    get_or_create_attendance_session(class_id, date, time, teacher_note)
   end
 
   def update_attendance_session(class_id, session_id, date, teacher_note = nil)
@@ -490,6 +545,31 @@ class TeacherClassService
     end
 
     schedule
+  end
+
+  def parse_date_with_time(date_str, time_str = nil)
+    date_parts = date_str.split('-').map(&:to_i)
+    year, month, day = date_parts
+    
+    hours = 0
+    minutes = 0
+    
+    if time_str.present?
+      time_parts = time_str.split(':').map(&:to_i)
+      hours = time_parts[0] || 0
+      minutes = time_parts[1] || 0
+    end
+    
+   
+    Time.utc(year, month, day, hours, minutes, 0)
+  rescue StandardError => e
+    Rails.logger.error("Error parsing date with time: #{e.message}")
+    begin
+      datetime_str = "#{date_str} #{time_str || '00:00'}:00"
+      Time.parse("#{datetime_str} UTC")
+    rescue
+      Time.current.utc
+    end
   end
 
   attr_reader :teacher

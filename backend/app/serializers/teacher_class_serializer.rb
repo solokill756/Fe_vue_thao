@@ -42,6 +42,7 @@ class TeacherClassSerializer
       grade_level: @class.grade_level,
       fee_per_session: @class.fee_per_session&.to_f || 0,
       cover_image: @class.cover_image,
+      raw_schedule: @class.schedule,
       students_list: active_enrollments.map do |enrollment|
         student = enrollment.student
         user = student.user
@@ -50,7 +51,10 @@ class TeacherClassSerializer
           name: user.full_name,
           dob: student.dob&.strftime('%Y-%m-%d') || 'N/A',
           phone: user.phone_number || 'N/A',
-          parent: 'N/A'
+          parent: student.parent_name || 'N/A',
+          student_code: student.student_code,
+          sessions_attended: enrollment.sessions_attended_count || 0,
+          avatar: user.photo_url
         }
       end
     }

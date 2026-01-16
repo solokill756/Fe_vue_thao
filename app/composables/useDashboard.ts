@@ -30,7 +30,7 @@ export interface StudentInfo {
   class: string;
 }
 
-export interface DashboardData {
+export interface DashboardDataTransformed {
   student: StudentInfo;
   classes: StudentClass[];
   assignments: AssignmentDashboard[];
@@ -50,7 +50,7 @@ export const useDashboard = (): {
   todayClasses: Ref<StudentClass[]>;
   pendingAssignments: Ref<AssignmentDashboard[]>;
   tuitionData: Ref<Tuition>;
-  stats: Ref<DashboardData['stats']>;
+  stats: Ref<DashboardDataTransformed['stats']>;
   pending: Ref<boolean>;
   error: Ref<any>;
 } => {

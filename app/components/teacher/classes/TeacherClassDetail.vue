@@ -101,6 +101,9 @@
 <script setup lang="ts">
 import type { TeacherClassDetail } from '../../../composables/useTeacherClassApi';
 import { useTeacherClassApi } from '../../../composables/useTeacherClassApi';
+import { getErrorMessage } from '../../../utils/errorHandler';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
 import TeacherClassStudentsTab from './class-detail/TeacherClassStudentsTab.vue';
 import TeacherClassScheduleTab from './class-detail/TeacherClassScheduleTab.vue';
 import TeacherClassSettingsTab from './class-detail/TeacherClassSettingsTab.vue';
@@ -159,6 +162,85 @@ const {
   }
 );
 
+const createNextAttendanceSession = async () => {
+  const { createAttendanceSession } = useTeacherClassApi();
+  const { t } = useI18n();
+  const toast = useToast();
+
+  try {
+    const schedule = props.classDetail.raw_schedule;
+    if (!schedule || typeof schedule !== 'object') {
+      toast.error(t('teacher.classes.scheduleTab.errors.noSchedule'));
+      return;
+    }
+
+    const dayIndices = Object.keys(schedule)
+      .map(Number)
+      .filter((idx) => !isNaN(idx) && idx >= 0 && idx <= 6);
+
+    if (dayIndices.length === 0) {
+      toast.error(t('teacher.classes.scheduleTab.errors.noSchedule'));
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeekDates: Array<{ date: string; time: string }> = [];
+
+    for (const dayIndex of dayIndices) {
+      const date = new Date(today);
+      const currentDay = date.getDay();
+
+      const mondayBasedDay = currentDay === 0 ? 6 : currentDay - 1;
+
+      let daysToAdd = dayIndex - mondayBasedDay;
+      if (daysToAdd <= 0) daysToAdd += 7;
+
+      if (daysToAdd > 6) continue;
+
+      date.setDate(date.getDate() + daysToAdd);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+
+      if (!dateStr || isNaN(date.getTime())) {
+        continue;
+      }
+
+      const timeStr = schedule[dayIndex.toString()] || '';
+      const timeParts = timeStr ? timeStr.split('-') : [];
+      const startTime: string = timeParts[0] || '00:00';
+
+      nextWeekDates.push({ date: dateStr, time: startTime });
+    }
+
+    if (nextWeekDates.length === 0) {
+      return;
+    }
+
+    nextWeekDates.sort((a, b) => a.date.localeCompare(b.date));
+
+    const promises = nextWeekDates.map(({ date, time }) =>
+      createAttendanceSession(props.classDetail.id, date, time || '00:00')
+    );
+
+    await Promise.all(promises);
+
+    toast.success(
+      t('teacher.classes.scheduleTab.messages.sessionsCreated', {
+        count: nextWeekDates.length,
+      })
+    );
+
+    refreshSchedule();
+  } catch (error) {
+    const errorMsg = getErrorMessage(error, 'teacher.classes.scheduleTab', t);
+    toast.error(errorMsg);
+  }
+};
+
 const switchTab = (tab: 'students' | 'schedule' | 'settings') => {
   activeTab.value = tab;
   navigateTo({
@@ -174,6 +256,21 @@ watch(
     if (activeTab.value === 'students' && props.classDetail.id) {
       refreshPendingRequests();
     } else if (activeTab.value === 'schedule' && props.classDetail.id) {
+      refreshSchedule();
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => scheduleData.value.upcoming_sessions,
+  () => {
+    if (
+      !loadingSchedule.value &&
+      scheduleData.value.upcoming_sessions.length === 0 &&
+      props.classDetail.id
+    ) {
+      createNextAttendanceSession();
       refreshSchedule();
     }
   },

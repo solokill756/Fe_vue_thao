@@ -16,12 +16,16 @@ export interface TeacherClass {
 
 export interface TeacherClassDetail extends TeacherClass {
   description?: string;
+  raw_schedule?: Record<string, string> | null;
   students_list: Array<{
     id: number;
     name: string;
     dob: string;
     phone: string;
     parent: string;
+    student_code?: string;
+    sessions_attended?: number;
+    avatar?: string;
   }>;
 }
 
@@ -209,14 +213,20 @@ export const useTeacherClassApi = () => {
     date: string,
     teacherNote?: string
   ) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
-      `${apiBase}/teacher/classes/${classId}/attendance_sessions`,
-      {
-        method: 'POST',
-        headers: getAuthHeader(),
-        body: { date, teacher_note: teacherNote },
-      }
-    );
+    $fetch<
+      ApiResponseSuccess<{
+        session: {
+          id: number;
+          date: string;
+          date_display: string;
+          time_display: string;
+        };
+      }>
+    >(`${apiBase}/teacher/classes/${classId}/attendance_sessions`, {
+      method: 'POST',
+      headers: getAuthHeader(),
+      body: { date, teacher_note: teacherNote },
+    });
 
   const updateAttendanceSession = (
     classId: number,

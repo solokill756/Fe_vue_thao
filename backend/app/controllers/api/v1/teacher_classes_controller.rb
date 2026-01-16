@@ -164,6 +164,7 @@ module Api
         result = service.create_attendance_session(
           params[:id], 
           attendance_session_params[:date], 
+          attendance_session_params[:time],
           attendance_session_params[:teacher_note]
         )
         
@@ -254,7 +255,7 @@ module Api
       end
 
       def attendance_session_params
-        params.permit(:date, :teacher_note)
+        params.permit(:date, :time, :teacher_note)
       end
 
       def class_params
