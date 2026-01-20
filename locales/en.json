@@ -127,6 +127,7 @@
       "allStatus": "All",
       "noSubmission": "No Submission",
       "submitted": "Submitted",
+      "late": "Late Submission",
       "graded": "Graded",
       "noAssignmentsFound": "No assignments found.",
       "taskContent": "Assignment Content",
@@ -316,6 +317,8 @@
         "description": "Request leave from class",
         "date": "Date",
         "selectDate": "Select date",
+        "loadingDates": "Loading available dates...",
+        "noDatesAvailable": "No dates available in this time range",
         "leaveType": "Leave Type",
         "temporary": "Temporary Leave",
         "permanent": "Permanent Leave",
@@ -328,7 +331,8 @@
         "cancelError": "An error occurred while cancelling the leave request. Please try again.",
         "errorMessage": "Please enter a reason for your leave request",
         "successMessage": "Leave request submitted successfully. Waiting for teacher approval.",
-        "errorSubmitting": "An error occurred while submitting the request. Please try again."
+        "errorSubmitting": "An error occurred while submitting the request. Please try again.",
+        "requestInfo": "Please use the Attendance tab to request leave"
       },
       "errors": {
         "VALIDATION_ERROR": "Invalid data. Please check your information.",
@@ -400,7 +404,9 @@
     "studentProfile": "Loading student profile...",
     "assignments": "Loading assignments...",
     "classes": "Loading classes...",
-    "dashboard": "Loading dashboard..."
+    "dashboard": "Loading dashboard...",
+    "assignmentDetail": "Loading assignment details...",
+    "submissions": "Loading submissions..."
   },
   "error": {
     "fetchAssignments": "Unable to load assignments. Please try again.",
@@ -451,18 +457,7 @@
       "noClassesToday": "No classes today",
       "aiSuggestion": "Sir, class Math 12A has 3 students with low scores consecutively. Would you like me to draft a message to remind their parents?"
     },
-    "attendance": {
-      "selectClass": "Select Class",
-      "totalStudents": "Total",
-      "student": "Student",
-      "present": "Present",
-      "absentExcused": "Absent (Excused)",
-      "absentUnexcused": "Absent (Unexcused)",
-      "late": "Late",
-      "note": "Note",
-      "enterNote": "Enter note...",
-      "save": "Save Attendance"
-    },
+
     "finance": {
       "monthlyCollection": "Monthly Tuition Collection - January 2024",
       "allClasses": "All Classes",
@@ -473,9 +468,138 @@
       "noOutstanding": "No outstanding payments",
       "debt": "Debt",
       "dueDate": "Due Date",
-      "reminderSent": "Reminder sent",
+    
       "remindersSent": "Reminders sent to all",
-      "send": "Send"
+      "send": "Send",
+      "selectClass": "Select Class",
+      "searchPlaceholder": "Search student...",
+      "sendAllReminders": "Remind All Debt",
+      "loading": "Loading finance data...",
+      "errorLoading": "Unable to load finance data. Please try again.",
+      "retry": "Retry",
+      "selectClassPrompt": "Please select a class to view finance information",
+      "noStudents": "No students in this class",
+      "reminderSent": "Reminder sent successfully",
+      "errorSendingReminder": "Unable to send reminder. Please try again.",
+      "allRemindersSent": "Reminders sent to {count} students",
+      "errorSendingReminders": "Unable to send reminders. Please try again.",
+      "historyComingSoon": "History feature coming soon",
+      "pendingTransactions": "Pending Transactions",
+      "noPendingTransactions": "No pending transactions",
+      "errorLoadingTransactions": "Unable to load transactions. Please try again.",
+      "transactionsTable": {
+        "student": "Student",
+        "invoice": "Invoice Code",
+        "amount": "Amount",
+        "method": "Method",
+        "date": "Created Date",
+        "actions": "Actions",
+        "cash": "Cash",
+        "transfer": "Bank Transfer",
+        "approve": "Approve",
+        "reject": "Reject",
+        "confirmApprove": "Are you sure you want to approve this transaction?",
+        "confirmReject": "Are you sure you want to reject this transaction?",
+        "approveSuccess": "Transaction approved successfully!",
+        "rejectSuccess": "Transaction rejected!",
+        "approveError": "Unable to approve transaction. Please try again.",
+        "rejectError": "Unable to reject transaction. Please try again."
+      },
+      "stats": {
+        "collectedThisMonth": "Total Collected",
+        "outstandingDebt": "Outstanding / Debt",
+        "expiringSoon": "Expiring Soon",
+        "students": "students",
+        "studentsWithDebt": "students with debt",
+        "needRenewal": "Need renewal reminder"
+      },
+      "table": {
+        "student": "Student",
+        "package": "Package / Sessions",
+        "status": "Status",
+        "amount": "Amount",
+        "actions": "Actions",
+        "parent": "Parent",
+        "remaining": "Remaining",
+        "sessions": "sessions",
+        "expiringSoon": "Expiring soon"
+      },
+      "status": {
+        "paid": "Paid",
+        "debt": "Debt",
+        "expiringSoon": "Expiring Soon",
+        "new": "New Student"
+      },
+      "actions": {
+        "recordPayment": "Record Payment",
+        "sendReminder": "Send Reminder",
+        "viewHistory": "History",
+        "createInvoice": "Create Invoice"
+      },
+      "paymentModal": {
+        "title": "Record Payment",
+        "package": "Package",
+        "amount": "Amount Received",
+        "maxAmount": "Maximum",
+        "paymentMethod": "Payment Method",
+        "cash": "Cash",
+        "transfer": "Bank Transfer",
+        "note": "Note (Optional)",
+        "notePlaceholder": "e.g., Parent paid directly...",
+        "sendReceipt": "Send electronic receipt to parent",
+        "cancel": "Cancel",
+        "confirm": "Confirm Payment",
+        "success": "Payment recorded successfully!",
+        "error": "Unable to record payment. Please try again.",
+        "invalidAmount": "Please enter a valid amount"
+      },
+      "createInvoiceModal": {
+        "title": "Create Invoice",
+        "package": "Package",
+        "description": "Description",
+        "descriptionPlaceholder": "Invoice description (optional)",
+        "amount": "Amount",
+        "dueDate": "Due Date",
+        "status": "Status",
+        "statusPending": "Pending",
+        "statusPaid": "Paid",
+        "statusOverdue": "Overdue",
+        "titlePlaceholder": "e.g., Tuition fee January 2024",
+        "cancel": "Cancel",
+        "confirm": "Create Invoice",
+        "success": "Invoice created successfully!",
+        "error": "Unable to create invoice. Please try again.",
+        "invalidData": "Please fill in all required fields"
+      },
+      "historyModal": {
+        "title": "Payment History",
+        "student": "Student",
+        "loading": "Loading history...",
+        "noTransactions": "No transactions yet.",
+        "close": "Close",
+        "footer": "* Data shown for the last 12 months",
+        "transactionContent": "Tuition payment",
+        "table": {
+          "date": "Date",
+          "content": "Content",
+          "method": "Method",
+          "amount": "Amount",
+          "status": "Status"
+        },
+        "method": {
+          "cash": "Cash",
+          "transfer": "Bank Transfer"
+        },
+        "status": {
+          "completed": "Completed",
+          "pending": "Pending",
+          "failed": "Failed"
+        },
+        "error": {
+          "noData": "No data to display",
+          "loading": "Unable to load history. Please try again."
+        }
+      }
     },
     "classes": {
       "noClasses": "You don't have any classes yet",
@@ -512,7 +636,7 @@
         "subjectPlaceholder": "e.g., Math, Physics, Chemistry...",
         "gradeLevel": "Grade Level",
         "gradeLevelPlaceholder": "e.g., Grade 10, Grade 11...",
-        "feePerSession": "Fee per Session (VND)",
+        "monthlyTuitionFee": "Monthly Tuition Fee (VND)",
         "schedule": "Schedule",
         "to": "to",
         "description": "Description",
@@ -597,16 +721,22 @@
         "noFixedSchedule": "No fixed schedule",
         "change": "Change",
         "upcomingSessions": "Upcoming Sessions",
+        "makeupClasses": "Make-up Classes",
         "addSession": "Add Session",
+        "addMakeupClass": "Add Make-up Class",
         "loading": "Loading...",
         "noUpcomingSessions": "No upcoming sessions",
+        "noMakeupClasses": "No make-up classes",
         "upcoming": "Upcoming",
+        "makeup": "Make-up",
         "edit": "Edit",
         "delete": "Delete",
         "modal": {
           "editFixedSchedule": "Edit Fixed Schedule",
           "editSession": "Edit Session",
+          "editMakeupClass": "Edit Make-up Class",
           "addSession": "Add Session",
+          "addMakeupClass": "Add Make-up Class",
           "description": "Fixed schedule currently only supports JSON format. Example: number 0 is Monday, number 2 is Wednesday, value is class time (e.g., 17:30-19:00)",
           "scheduleJson": "Schedule (JSON)",
           "schedulePlaceholder": "Enter JSON, e.g., number 0 is Monday, number 2 is Wednesday",
@@ -664,7 +794,7 @@
         "subjectPlaceholder": "Enter subject",
         "gradeLevel": "Grade Level",
         "gradeLevelPlaceholder": "e.g., Grade 10, Grade 11...",
-        "feePerSession": "Fee per Session (VND)",
+        "monthlyTuitionFee": "Monthly Tuition Fee (VND)",
         "feePlaceholder": "0",
         "status": "Status",
         "statusActive": "Active",
@@ -767,7 +897,110 @@
       "status": "Status",
       "graded": "Graded",
       "pending": "Pending",
-      "selectAssignmentFirst": "Please select an assignment first"
+      "selectAssignmentFirst": "Please select an assignment first",
+      "searchPlaceholder": "Search assignments...",
+      "errorLoading": "Unable to load assignments",
+      "noAssignments": "No assignments found",
+      "statusOpen": "Open",
+      "statusClosed": "Closed",
+      "dueDate": "Due",
+      "gradingProgress": "Grading Progress",
+      "submissions": "submissions",
+      "total": "Total",
+      "students": "students",
+      "backToList": "Back to List",
+      "notSubmitted": "not submitted",
+      "all": "All",
+      "needsGrading": "Needs Grading",
+      "lateSubmission": "Late submission",
+      "textSubmission": "Text submission",
+      "submittedAt": "Submitted at {time}",
+      "viewSubmission": "View Submission",
+      "studentNotSubmitted": "This student has not submitted yet.",
+      "feedback": "Feedback",
+      "aiFeedbackHint": "Use AI to generate feedback based on score",
+      "aiSuggestion": "AI Suggestion",
+      "feedbackPlaceholder": "Enter teacher feedback...",
+      "previousStudent": "Previous Student",
+      "saveAndContinue": "Save & Continue",
+      "nextStudent": "Next Student",
+      "selectStudent": "Select a student to start grading.",
+      "enterScore": "Please enter a score",
+      "enterScoreFirst": "Please enter score first for AI suggestion!",
+      "saveSuccess": "Score and feedback saved!",
+      "retry": "Retry",
+      "cannotGradeMissing": "Cannot grade a student who has not submitted",
+      "aiFeedback": {
+        "excellent": "Excellent! Smart and concise solution. Keep it up!",
+        "good": "Good work. However, please pay more attention to presentation in the conclusion.",
+        "average": "Understood the concept but made calculation errors. Need to review matrix multiplication formulas.",
+        "poor": "Work does not meet requirements. Please review basic knowledge of this chapter and redo the assignment."
+      },
+      "createModal": {
+        "title": "Create New Assignment",
+        "class": "Class",
+        "selectClass": "Select Class",
+        "titleLabel": "Assignment Title",
+        "titlePlaceholder": "Enter assignment title",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter assignment description (optional)",
+        "dueDate": "Due Date",
+        "cancel": "Cancel",
+        "create": "Create Assignment",
+        "creating": "Creating...",
+        "success": "Assignment created successfully!",
+        "attachment": "Attachment",
+        "dragDropFile": "Drag and drop file here or",
+        "selectFile": "select file",
+        "supportedFormats": "Supported: PDF, DOCX, JPG, PNG, TXT (Max 100MB)",
+        "errors": {
+          "classRequired": "Please select a class",
+          "titleRequired": "Title must be at least 3 characters",
+          "dueDateRequired": "Please select due date",
+          "dueDateFuture": "Due date must be in the future",
+          "fileTooLarge": "File too large. Maximum 100MB",
+          "invalidFileType": "File type not supported"
+        }
+      },
+      "editModal": {
+        "title": "Edit Assignment",
+        "class": "Class",
+        "titleLabel": "Assignment Title",
+        "titlePlaceholder": "Enter assignment title",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter assignment description (optional)",
+        "dueDate": "Due Date",
+        "cancel": "Cancel",
+        "update": "Update",
+        "updating": "Updating...",
+        "success": "Assignment updated successfully!",
+        "attachment": "New Attachment (optional)",
+        "currentFile": "Current File",
+        "dragDropFile": "Drag and drop file here or",
+        "selectFile": "select file",
+        "supportedFormats": "Supported: PDF, DOCX, JPG, PNG, TXT (Max 100MB)",
+        "errors": {
+          "classRequired": "Please select a class",
+          "titleRequired": "Title must be at least 3 characters",
+          "dueDateRequired": "Please select due date",
+          "dueDateFuture": "Due date must be in the future",
+          "fileTooLarge": "File too large. Maximum 100MB",
+          "invalidFileType": "File type not supported"
+        }
+      },
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this assignment?",
+      "deleteSuccess": "Assignment deleted successfully!",
+      "errors": {
+        "VALIDATION_ERROR": "Invalid data",
+        "UNAUTHORIZED": "You are not logged in",
+        "FORBIDDEN": "You do not have permission to perform this action",
+        "NOT_FOUND": "Data not found",
+        "BAD_REQUEST": "Invalid request",
+        "INTERNAL_ERROR": "System error, please try again later",
+        "ERROR": "An error occurred"
+      }
     },
     "ai": {
       "title": "Teacher AI Assistant",
@@ -791,6 +1024,15 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
     "cancel": "Cancel",
     "submit": "Submit",
     "save": "Save",
@@ -811,9 +1053,79 @@
     },
     "errors": {
       "networkError": "Network error. Please check your connection.",
-      "serverError": "Server error. Please try again later."
+      "serverError": "Server error. Please try again later.",
+      "defaultTitle": "An error occurred",
+      "defaultMessage": "Unable to load data. Please try again later.",
+      "errorDetails": "Error Details",
+      "retry": "Retry"
     },
     "logoutSuccess": "You have been logged out successfully.",
     "logoutError": "An error occurred during logout. Please try again."
+  },
+  "admin": {
+    "users": {
+      "title": "User Management",
+      "createUser": "Create New User",
+      "searchPlaceholder": "Search by email or name...",
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "loading": "Loading...",
+      "noUsers": "No users found",
+      "tableHeaders": {
+        "id": "ID",
+        "email": "Email",
+        "name": "Name",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Created Date",
+        "actions": "Actions"
+      },
+      "roles": {
+        "teacher": "Teacher",
+        "student": "Student"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "modal": {
+        "createTitle": "Create New User",
+        "editTitle": "Edit User",
+        "email": "Email",
+        "fullName": "Full Name",
+        "password": "Password",
+        "passwordPlaceholder": "Leave blank if not changing",
+        "role": "Role",
+        "phoneNumber": "Phone Number",
+        "isActive": "Activate Account",
+        "cancel": "Cancel",
+        "create": "Create",
+        "update": "Update",
+        "processing": "Processing...",
+        "errors": {
+          "fillAllFields": "Please fill in all required fields",
+          "passwordRequired": "Please enter password",
+          "errorOccurred": "An error occurred"
+        },
+        "success": {
+          "create": "User created successfully",
+          "update": "User updated successfully"
+        }
+      },
+      "toggleStatus": {
+        "confirmLock": "Are you sure you want to lock this account?",
+        "confirmActivate": "Are you sure you want to activate this account?",
+        "locked": "Account locked",
+        "activated": "Account activated",
+        "error": "An error occurred"
+      },
+      "delete": {
+        "confirm": "Are you sure you want to delete user \"{name}\"?",
+        "success": "User deleted",
+        "error": "An error occurred"
+      }
+    }
   }
 }

@@ -14,7 +14,7 @@ class TeacherClassService
       subject: params[:subject],
       grade_level: params[:grade_level],
       description: params[:description],
-      fee_per_session: params[:fee_per_session],
+      monthly_tuition_fee: params[:monthly_tuition_fee],
       status: params[:status] || 'active',
       schedule: schedule,
       teacher_id: @teacher.user_id
@@ -58,394 +58,6 @@ class TeacherClassService
     Result.failure({ error: e.message })
   end
 
-  def get_pending_requests(class_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    pending_enrollments = Enrollment.where(class_id: class_obj.id, status: 'pending')
-                                   .includes(student: :user)
-    
-    pending_leave_requests = LeaveRequest.where(class_id: class_obj.id, status: 'pending')
-                                         .includes(student: :user)
-
-    enrollments_data = pending_enrollments.map do |enrollment|
-      {
-        id: enrollment.id,
-        student_id: enrollment.student_id,
-        student_name: enrollment.student.user.full_name,
-        student_phone: enrollment.student.user.phone_number || 'N/A',
-        created_at: enrollment.created_at
-      }
-    end
-
-    leave_requests_data = pending_leave_requests.map do |request|
-      {
-        id: request.id,
-        student_id: request.student_id,
-        student_name: request.student.user.full_name,
-        student_phone: request.student.user.phone_number || 'N/A',
-        leave_type: request.leave_type,
-        date: request.date&.strftime('%Y-%m-%d'),
-        reason: request.reason,
-        created_at: request.created_at
-      }
-    end
-
-    Result.success({
-      enrollments: enrollments_data,
-      leave_requests: leave_requests_data
-    })
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#get_pending_requests: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def approve_enrollment(class_id, enrollment_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    enrollment = Enrollment.find_by(id: enrollment_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Enrollment not found' }) unless enrollment
-    if enrollment.update(status: 'active')
-      Result.success({ 
-        message: 'Enrollment approved successfully', 
-        enrollment: { id: enrollment.id, status: enrollment.status } 
-      })
-    else
-      Result.failure(enrollment.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#approve_enrollment: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def reject_enrollment(class_id, enrollment_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    enrollment = Enrollment.find_by(id: enrollment_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Enrollment not found' }) unless enrollment
-
-    if enrollment.destroy
-      Result.success({ message: 'Enrollment rejected successfully' })
-    else
-      Result.failure(enrollment.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#reject_enrollment: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def approve_leave_request(class_id, leave_request_id, teacher_note = nil)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    leave_request = LeaveRequest.find_by(id: leave_request_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Leave request not found' }) unless leave_request
-
-    if leave_request.update(status: 'approved', teacher_note: teacher_note)
-      if leave_request.permanent?
-        enrollment = Enrollment.find_by(class_id: class_obj.id, student_id: leave_request.student_id)
-        enrollment&.update(status: 'dropped')
-      end
-      Result.success({ 
-        message: 'Leave request approved successfully', 
-        leave_request: { id: leave_request.id, status: leave_request.status } 
-      })
-    else
-      Result.failure(leave_request.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#approve_leave_request: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def reject_leave_request(class_id, leave_request_id, teacher_note = nil)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    leave_request = LeaveRequest.find_by(id: leave_request_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Leave request not found' }) unless leave_request
-
-    if leave_request.update(status: 'rejected', teacher_note: teacher_note)
-      Result.success({ 
-        message: 'Leave request rejected successfully', 
-        leave_request: { id: leave_request.id, status: leave_request.status } 
-      })
-    else
-      Result.failure(leave_request.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#reject_leave_request: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def add_student(class_id, student_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    student = Student.find_by(id: student_id)
-    return Result.failure({ error: 'Student not found' }) unless student
-
-    # Check if student is already enrolled
-    existing_enrollment = Enrollment.find_by(class_id: class_obj.id, student_id: student_id)
-    if existing_enrollment
-      if existing_enrollment.status == 'active'
-        return Result.failure({ error: 'Student is already enrolled in this class' })
-      else
-        # Reactivate enrollment if it was dropped or pending
-        if existing_enrollment.update(status: 'active')
-          return Result.success({ 
-            message: 'Student added successfully', 
-            enrollment: { id: existing_enrollment.id, status: existing_enrollment.status } 
-          })
-        else
-          return Result.failure(existing_enrollment.errors.messages)
-        end
-      end
-    end
-
-    # Create new enrollment with active status
-    enrollment = Enrollment.new(
-      class_id: class_obj.id,
-      student_id: student_id,
-      status: 'active',
-      tuition_debt: 0,
-      sessions_attended: 0
-    )
-
-    if enrollment.save
-      Result.success({ 
-        message: 'Student added successfully', 
-        enrollment: { id: enrollment.id, status: enrollment.status } 
-      })
-    else
-      Result.failure(enrollment.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#add_student: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def remove_student(class_id, student_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    enrollment = Enrollment.find_by(class_id: class_obj.id, student_id: student_id)
-    return Result.failure({ error: 'Student is not enrolled in this class' }) unless enrollment
-
-    if enrollment.update(status: 'dropped')
-      Result.success({ message: 'Student removed successfully' })
-    else
-      Result.failure(enrollment.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#remove_student: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def search_students(query)
-    return Result.failure({ error: 'Search query is required' }) if query.blank?
-
-    search_term = "%#{query}%"
-    students = Student.joins(:user)
-                     .where("LOWER(users.full_name) LIKE LOWER(?) OR LOWER(users.email) LIKE LOWER(?) OR LOWER(students.student_code) LIKE LOWER(?)", 
-                            search_term, search_term, search_term)
-                     .limit(20)
-                     .includes(:user)
-
-    students_data = students.map do |student|
-      {
-        id: student.id,
-        name: student.user.full_name,
-        email: student.user.email,
-        student_code: student.student_code,
-        phone: student.user.phone_number || 'N/A'
-      }
-    end
-
-    Result.success({ students: students_data })
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#search_students: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def get_class_schedule(class_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    # Get fixed schedule from class
-    schedule = class_obj.schedule || {}
-    
-    # Get upcoming attendance sessions
-    upcoming_sessions = AttendanceSession.where(class_id: class_obj.id)
-                                        .where('date > ?', Time.current)
-                                        .order(date: :asc)
-                                        .limit(10)
-
-    sessions_data = upcoming_sessions.map do |session|
-      {
-        id: session.id,
-        date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
-        date_display: session.date.strftime('%d/%m/%Y'),
-        time_display: session.date.strftime('%H:%M'),
-        day_of_week: session.date.strftime('%A'),
-        teacher_note: session.teacher_note || '',
-        status: session.date > Time.current ? 'upcoming' : 'past'
-      }
-    end
-
-    Result.success({
-      fixed_schedule: schedule,
-      upcoming_sessions: sessions_data
-    })
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#get_class_schedule: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def get_or_create_attendance_session(class_id, date, time = nil, teacher_note = nil)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    parsed_date = parse_date_with_time(date, time)
-
-    start_time = parsed_date - 1.second
-    end_time = parsed_date + 1.second
-    session = AttendanceSession.where(class_id: class_obj.id)
-                               .where(date: start_time..end_time)
-                               .first
-    
-    if session
-      if teacher_note.present?
-        session.update(teacher_note: teacher_note)
-      end
-      
-      Result.success({ 
-        session: { 
-          id: session.id, 
-          date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
-          date_display: session.date.strftime('%d/%m/%Y'),
-          time_display: session.date.strftime('%H:%M')
-        } 
-      })
-    else
-      session = AttendanceSession.new(
-        class_id: class_obj.id,
-        date: parsed_date,
-        teacher_note: teacher_note
-      )
-
-      begin
-        if session.save
-          Result.success({ 
-            session: { 
-              id: session.id, 
-              date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
-              date_display: session.date.strftime('%d/%m/%Y'),
-              time_display: session.date.strftime('%H:%M')
-            } 
-          })
-        else
-          Result.failure(session.errors.messages)
-        end
-      rescue ActiveRecord::RecordNotUnique, Mysql2::Error => e
-        # If duplicate entry error, try to find the existing session again
-        if e.message.include?('Duplicate entry')
-          existing_session = AttendanceSession.where(class_id: class_obj.id)
-                                             .where(date: start_time..end_time)
-                                             .first
-          
-          if existing_session
-            # Update teacher note if provided
-            if teacher_note.present?
-              existing_session.update(teacher_note: teacher_note)
-            end
-            
-            Result.success({ 
-              session: { 
-                id: existing_session.id, 
-                date: existing_session.date.strftime('%Y-%m-%d %H:%M:%S'),
-                date_display: existing_session.date.strftime('%d/%m/%Y'),
-                time_display: existing_session.date.strftime('%H:%M')
-              } 
-            })
-          else
-            Result.failure({ error: 'Failed to create or find attendance session' })
-          end
-        else
-          raise e
-        end
-      end
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#get_or_create_attendance_session: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def create_attendance_session(class_id, date, time = nil, teacher_note = nil)
-    get_or_create_attendance_session(class_id, date, time, teacher_note)
-  end
-
-  def update_attendance_session(class_id, session_id, date, teacher_note = nil)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    session = AttendanceSession.find_by(id: session_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Attendance session not found' }) unless session
-
-    if session.update(date: date, teacher_note: teacher_note)
-      Result.success({ 
-        message: 'Attendance session updated successfully', 
-        session: { 
-          id: session.id, 
-          date: session.date.strftime('%Y-%m-%d %H:%M:%S'),
-          date_display: session.date.strftime('%d/%m/%Y'),
-          time_display: session.date.strftime('%H:%M')
-        } 
-      })
-    else
-      Result.failure(session.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#update_attendance_session: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def delete_attendance_session(class_id, session_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    session = AttendanceSession.find_by(id: session_id, class_id: class_obj.id)
-    return Result.failure({ error: 'Attendance session not found' }) unless session
-
-    if session.destroy
-      Result.success({ message: 'Attendance session deleted successfully' })
-    else
-      Result.failure(session.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#delete_attendance_session: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
-  def update_class_schedule(class_id, schedule_data)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
-
-    if class_obj.update(schedule: schedule_data)
-      Result.success({ 
-        message: 'Schedule updated successfully', 
-        schedule: class_obj.schedule 
-      })
-    else
-      Result.failure(class_obj.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#update_class_schedule: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
-  end
-
   def update_class(class_id, params)
     class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
     return Result.failure({ error: 'Class not found' }) unless class_obj
@@ -466,6 +78,20 @@ class TeacherClassService
     end
   rescue StandardError => e
     Rails.logger.error("Error in TeacherClassService#update_class: #{e.message}\n#{e.backtrace.join("\n")}")
+    Result.failure({ error: e.message })
+  end
+
+  def delete_class(class_id)
+    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
+    return Result.failure({ error: 'Class not found' }) unless class_obj
+
+    if class_obj.destroy
+      Result.success({ message: 'Class deleted successfully' })
+    else
+      Result.failure(class_obj.errors.messages)
+    end
+  rescue StandardError => e
+    Rails.logger.error("Error in TeacherClassService#delete_class: #{e.message}\n#{e.backtrace.join("\n")}")
     Result.failure({ error: e.message })
   end
 
@@ -499,18 +125,104 @@ class TeacherClassService
     Result.failure({ error: e.message })
   end
 
-  def delete_class(class_id)
-    class_obj = SchoolClass.where(teacher_id: @teacher.user_id).find_by(id: class_id)
-    return Result.failure({ error: 'Class not found' }) unless class_obj
+  # Delegate methods to specialized services
+  def enrollment_service
+    @enrollment_service ||= TeacherClassEnrollmentService.new(@teacher)
+  end
 
-    if class_obj.destroy
-      Result.success({ message: 'Class deleted successfully' })
-    else
-      Result.failure(class_obj.errors.messages)
-    end
-  rescue StandardError => e
-    Rails.logger.error("Error in TeacherClassService#delete_class: #{e.message}\n#{e.backtrace.join("\n")}")
-    Result.failure({ error: e.message })
+  def schedule_service
+    @schedule_service ||= TeacherClassScheduleService.new(@teacher)
+  end
+
+  def finance_service
+    @finance_service ||= TeacherClassFinanceService.new(@teacher)
+  end
+
+  # Delegate enrollment methods
+  def get_pending_requests(class_id)
+    enrollment_service.get_pending_requests(class_id)
+  end
+
+  def approve_enrollment(class_id, enrollment_id)
+    enrollment_service.approve_enrollment(class_id, enrollment_id)
+  end
+
+  def reject_enrollment(class_id, enrollment_id)
+    enrollment_service.reject_enrollment(class_id, enrollment_id)
+  end
+
+  def approve_leave_request(class_id, leave_request_id, teacher_note = nil)
+    enrollment_service.approve_leave_request(class_id, leave_request_id, teacher_note)
+  end
+
+  def reject_leave_request(class_id, leave_request_id, teacher_note = nil)
+    enrollment_service.reject_leave_request(class_id, leave_request_id, teacher_note)
+  end
+
+  def add_student(class_id, student_id)
+    enrollment_service.add_student(class_id, student_id)
+  end
+
+  def remove_student(class_id, student_id)
+    enrollment_service.remove_student(class_id, student_id)
+  end
+
+  def search_students(query)
+    enrollment_service.search_students(query)
+  end
+
+  # Delegate schedule methods
+  def get_class_schedule(class_id)
+    schedule_service.get_class_schedule(class_id)
+  end
+
+  def get_or_create_attendance_session(class_id, date, time = nil, teacher_note = nil)
+    schedule_service.get_or_create_attendance_session(class_id, date, time, teacher_note)
+  end
+
+  def create_attendance_session(class_id, date, time = nil, teacher_note = nil)
+    schedule_service.create_attendance_session(class_id, date, time, teacher_note)
+  end
+
+  def update_attendance_session(class_id, session_id, date, teacher_note = nil)
+    schedule_service.update_attendance_session(class_id, session_id, date, teacher_note)
+  end
+
+  def delete_attendance_session(class_id, session_id)
+    schedule_service.delete_attendance_session(class_id, session_id)
+  end
+
+  def update_class_schedule(class_id, schedule_data)
+    schedule_service.update_class_schedule(class_id, schedule_data)
+  end
+
+  # Delegate finance methods
+  def get_class_finance(class_id, search_query = nil)
+    finance_service.get_class_finance(class_id, search_query)
+  end
+
+  def get_all_finance_stats
+    finance_service.get_all_finance_stats
+  end
+
+  def record_payment(class_id, enrollment_id, payment_params)
+    finance_service.record_payment(class_id, enrollment_id, payment_params)
+  end
+
+  def send_reminder(class_id, enrollment_id, message = nil)
+    finance_service.send_reminder(class_id, enrollment_id, message)
+  end
+
+  def send_all_reminders(class_id)
+    finance_service.send_all_reminders(class_id)
+  end
+
+  def create_invoice_for_student(class_id, enrollment_id, invoice_params)
+    finance_service.create_invoice_for_student(class_id, enrollment_id, invoice_params)
+  end
+
+  def get_payment_history(class_id, enrollment_id, page = 1, per_page = 20)
+    finance_service.get_payment_history(class_id, enrollment_id, page, per_page)
   end
 
   private
@@ -545,31 +257,6 @@ class TeacherClassService
     end
 
     schedule
-  end
-
-  def parse_date_with_time(date_str, time_str = nil)
-    date_parts = date_str.split('-').map(&:to_i)
-    year, month, day = date_parts
-    
-    hours = 0
-    minutes = 0
-    
-    if time_str.present?
-      time_parts = time_str.split(':').map(&:to_i)
-      hours = time_parts[0] || 0
-      minutes = time_parts[1] || 0
-    end
-    
-   
-    Time.utc(year, month, day, hours, minutes, 0)
-  rescue StandardError => e
-    Rails.logger.error("Error parsing date with time: #{e.message}")
-    begin
-      datetime_str = "#{date_str} #{time_str || '00:00'}:00"
-      Time.parse("#{datetime_str} UTC")
-    rescue
-      Time.current.utc
-    end
   end
 
   attr_reader :teacher

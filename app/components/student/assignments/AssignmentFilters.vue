@@ -84,6 +84,17 @@
         {{ t('student.assignments.submitted') }}
       </button>
       <button
+        @click="handleStatusChange('late')"
+        :class="[
+          'px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          localFilterStatus === 'late'
+            ? 'bg-orange-600 text-white shadow-md'
+            : 'bg-white border border-slate-200 text-slate-600 hover:bg-orange-50 hover:text-orange-600',
+        ]"
+      >
+        {{ t('student.assignments.late') }}
+      </button>
+      <button
         @click="handleStatusChange('graded')"
         :class="[
           'px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',

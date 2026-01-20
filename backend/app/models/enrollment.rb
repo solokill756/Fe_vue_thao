@@ -43,14 +43,27 @@ class Enrollment < ApplicationRecord
   end
 
   def sessions_attended_count
-    AttendanceRecord
-      .joins(attendance_session: :school_class)
+    
+    last_invoice = student.tuition_invoices
+                         .where(class_id: class_id)
+                         .order(created_at: :desc)
+                         .first
+
+   
+    attendance_query = AttendanceRecord
+      .joins(:attendance_session)
       .where(
         attendance_sessions: { class_id: class_id },
         student_id: student_id,
-        status: 'present'
+        status: ['present', 'late']
       )
-      .count
+
+    
+    if last_invoice
+      attendance_query = attendance_query.where('attendance_sessions.date > ?', last_invoice.created_at.to_date)
+    end
+
+    attendance_query.count
   end
 
   private

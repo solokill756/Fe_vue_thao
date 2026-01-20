@@ -92,8 +92,8 @@
               </div>
             </div>
             <a
-              :href="assignment?.assignment_attachments?.[0]?.file_url"
-              target="_blank"
+              :href="getAttachmentDownloadUrl(assignment?.assignment_attachments?.[0])"
+              :download="assignment?.assignment_attachments?.[0]?.file_name || 'attachment'"
               class="ml-auto"
             >
               <i
@@ -127,8 +127,7 @@
             class="text-sm text-green-900 bg-white p-4 rounded-lg border border-green-100 italic"
           >
             "{{
-              assignment?.feedback ||
-              'Bài làm tốt, trình bày rõ ràng. Tuy nhiên cần chú ý câu 3b.'
+              historySubmissions?.[0]?.teacher_feedback || t('student.assignments.defaultFeedback')
             }}"
           </p>
         </div>
@@ -179,10 +178,22 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const { formatDate, mapSubmissionStatusToStatusKey } = useAssignmentApi();
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
 
 const submissionText = ref('');
 const selectedFile = ref<File | undefined>(undefined);
 const submissionRef = ref<SubmissionRef | null>(null);
+
+const getAttachmentDownloadUrl = (attachment: any): string => {
+  if (!attachment?.file_url) return '#';
+  // If URL is already absolute or starts with /, use it directly
+  if (attachment.file_url.startsWith('http') || attachment.file_url.startsWith('/')) {
+    return attachment.file_url.startsWith('/') ? `${apiBase}${attachment.file_url}` : attachment.file_url;
+  }
+  // Otherwise, construct full URL
+  return `${apiBase}${attachment.file_url}`;
+};
 
 const handleSubmit = () => {
   // Get submission data from child component via ref

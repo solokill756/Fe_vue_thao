@@ -19,8 +19,8 @@ class SchoolClass < ApplicationRecord
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 150 }
   validates :subject, presence: true, length: { minimum: 2, maximum: 50 }
-  validates :fee_per_session, numericality: { greater_than_or_equal_to: 0 },
-                              allow_nil: true
+  validates :monthly_tuition_fee, numericality: { greater_than_or_equal_to: 0 },
+                                   allow_nil: true
   validates :status, inclusion: { in: %w[active paused] }
 
   # Enums

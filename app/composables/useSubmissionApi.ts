@@ -4,6 +4,7 @@ import type {
 } from '@/types/assignment';
 import type { ApiResponseSuccess, PaginationParams } from '@/types/common';
 
+
 export const useSubmissionApi = () => {
   const config = useRuntimeConfig();
   const apiBase = config.public.apiBase;
@@ -14,11 +15,10 @@ export const useSubmissionApi = () => {
     assignment_id?: number;
     class_id?: number;
   }) =>
-    $fetch<ApiResponseSuccess<SubmissionListResponse>>(
+    apiFetch<ApiResponseSuccess<SubmissionListResponse>>(
       `${apiBase}/submissions/list-by-student`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
         params,
       }
     );
@@ -33,19 +33,15 @@ export const useSubmissionApi = () => {
           submitted_at?: string;
         }
   ) => {
-    const headers = getAuthHeader();
-
     if (payload instanceof FormData) {
-      return $fetch(`${apiBase}/submissions`, {
+      return apiFetch(`${apiBase}/submissions`, {
         method: 'POST',
-        headers,
         body: payload,
       });
     }
 
-    return $fetch(`${apiBase}/submissions`, {
+    return apiFetch(`${apiBase}/submissions`, {
       method: 'POST',
-      headers,
       body: { submission: payload },
     });
   };
@@ -58,16 +54,14 @@ export const useSubmissionApi = () => {
       status?: string;
     }
   ) =>
-    $fetch(`${apiBase}/submissions/${id}`, {
+    apiFetch(`${apiBase}/submissions/${id}`, {
       method: 'PATCH',
-      headers: getAuthHeader(),
       body: { submission: payload },
     });
 
   const deleteSubmission = (id: number) =>
-    $fetch(`${apiBase}/submissions/${id}`, {
+    apiFetch(`${apiBase}/submissions/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeader(),
     });
 
   return {

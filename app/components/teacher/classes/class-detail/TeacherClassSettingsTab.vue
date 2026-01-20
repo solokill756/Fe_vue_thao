@@ -37,10 +37,10 @@
         </div>
         <div class="space-y-1">
           <label class="text-sm font-bold text-slate-700"
-            >{{ $t('teacher.classes.settingsTab.feePerSession') }}</label
+            >{{ $t('teacher.classes.settingsTab.monthlyTuitionFee') }}</label
           >
           <input
-            v-model.number="settingsForm.fee_per_session"
+            v-model.number="settingsForm.monthly_tuition_fee"
             type="number"
             min="0"
             :placeholder="$t('teacher.classes.settingsTab.feePlaceholder')"
@@ -247,7 +247,7 @@ const settingsForm = ref({
   subject: '',
   grade_level: '',
   description: '',
-  fee_per_session: 0,
+  monthly_tuition_fee: 0,
   status: 'active',
   cover_image: '',
 });
@@ -266,7 +266,7 @@ watch(
         subject: newDetail.subject || '',
         grade_level: (newDetail as any).grade_level || newDetail.grade || '',
         description: newDetail.description || '',
-        fee_per_session: (newDetail as any).fee_per_session || 0,
+        monthly_tuition_fee: (newDetail as any).monthly_tuition_fee || 0,
         status: newDetail.status || 'active',
         cover_image: (newDetail as any).cover_image || '',
       };
@@ -334,8 +334,8 @@ const handleSaveSettings = async () => {
       formData.append('description', settingsForm.value.description);
     }
     formData.append(
-      'fee_per_session',
-      settingsForm.value.fee_per_session.toString()
+      'monthly_tuition_fee',
+      settingsForm.value.monthly_tuition_fee.toString()
     );
     formData.append('status', settingsForm.value.status);
 

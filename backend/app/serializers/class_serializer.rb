@@ -11,7 +11,7 @@ class ClassSerializer
       name: @class.name,
       subject: @class.subject,
       grade_level: @class.grade_level,
-      fee_per_session: @class.fee_per_session,
+      monthly_tuition_fee: @class.monthly_tuition_fee,
       teacher: teacher_info,
       schedule: @class.schedule,
       student_count: @class.students.count,

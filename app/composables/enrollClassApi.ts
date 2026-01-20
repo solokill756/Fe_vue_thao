@@ -5,14 +5,12 @@ export const useEnrollClassApi = () => {
   const apiBase = config.public.apiBase;
 
   const registerClass = (classId: number) =>
-    $fetch<ApiResponseSuccess<string>>(`${apiBase}/classes/${classId}/enroll`, {
+    apiFetch<ApiResponseSuccess<string>>(`${apiBase}/classes/${classId}/enroll`, {
       method: 'POST',
-      headers: getAuthHeader(),
     });
   const quitClass = (classId: number) =>
-    $fetch<ApiResponseSuccess<string>>(`${apiBase}/classes/${classId}/quit`, {
+    apiFetch<ApiResponseSuccess<string>>(`${apiBase}/classes/${classId}/quit`, {
       method: 'DELETE',
-      headers: getAuthHeader(),
     });
 
   const leaveRequestClass = (
@@ -21,11 +19,10 @@ export const useEnrollClassApi = () => {
     leaveType: string,
     date?: string
   ) =>
-    $fetch<ApiResponseSuccess<string>>(
+    apiFetch<ApiResponseSuccess<string>>(
       `${apiBase}/classes/${classId}/leave_requests`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: {
           leave_request: {
             date: date || null,

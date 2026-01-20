@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "bung87.vscode-gemfile",
+    "rebornix.Ruby",
+    "Shopify.ruby-lsp",
+    "KoichiSasada.vscode-rdbg",
+    "dbaeumer.vscode-eslint",
+    "Vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode"
+  ]
+}

@@ -136,37 +136,57 @@ const scheduleData = computed<ScheduleEvent[][]>(() => {
     .fill(null)
     .map(() => []);
 
-  props.classes.forEach((cls) => {
-    const scheduleStr = cls.schedule || '';
-    let dayIndex = 0;
-    let time = '';
+  // Chỉ lấy các class đã join (status = 'active')
+  const activeClasses = props.classes.filter((cls) => cls.status === 'active');
 
-    // Try to extract day from schedule string
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const times = scheduleStr.match(/\d{1,2}:\d{2}/g);
-
-    for (let i = 0; i < days.length; i++) {
-      if (scheduleStr.includes(days[i]!)) {
-        dayIndex = i;
-        break;
+  activeClasses.forEach((cls) => {
+    // Sử dụng rawSchedule nếu có (object format mới), nếu không thì fallback sang schedule string
+    let scheduleObj: Record<string, string> = {};
+    
+    if (cls.rawSchedule && typeof cls.rawSchedule === 'object') {
+      // Format mới: object với keys là số (0-6)
+      scheduleObj = cls.rawSchedule;
+    } else if (typeof cls.schedule === 'object' && cls.schedule !== null) {
+      // Fallback: nếu schedule là object (không phải string)
+      scheduleObj = cls.schedule;
+    } else if (typeof cls.schedule === 'string') {
+      // Nếu là string đã format, cố gắng parse (fallback cho format cũ)
+      const scheduleStr = cls.schedule || '';
+      const times = scheduleStr.match(/\d{1,2}:\d{2}/g);
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      
+      for (let i = 0; i < days.length; i++) {
+        if (scheduleStr.includes(days[i]!)) {
+          scheduleObj[i.toString()] = times ? times.join('-') : scheduleStr;
+          break;
+        }
       }
     }
 
-    if (times && times.length > 0) {
-      // Find end time if available (look for second time)
-      time = times.length > 1 ? `${times[0]} - ${times[1]}` : times[0];
-    } else {
-      time = scheduleStr;
-    }
+    // Xử lý từng ngày trong schedule
+    Object.entries(scheduleObj).forEach(([dayKey, timeRange]) => {
+      const dayIndex = parseInt(dayKey, 10);
+      
+      // Validate dayIndex (0-6: Monday-Sunday)
+      if (isNaN(dayIndex) || dayIndex < 0 || dayIndex > 6) return;
 
-    const event: ScheduleEvent = {
-      time,
-      subject: cls.name,
-      room: cls.room || 'TBD',
-      type: 'blue',
-    };
+      // Parse time range (có thể là "18:00-19:30" hoặc chỉ "18:00")
+      const timeParts = String(timeRange).split('-');
+      const startTime = timeParts[0]?.trim() || '';
+      const endTime = timeParts[1]?.trim() || '';
+      const time = endTime ? `${startTime} - ${endTime}` : startTime;
 
-    weekSchedule[dayIndex]!.push(event);
+      if (!time) return;
+
+      const event: ScheduleEvent = {
+        time,
+        subject: cls.name,
+        room: cls.room || 'TBD',
+        type: 'blue',
+      };
+
+      weekSchedule[dayIndex]!.push(event);
+    });
   });
 
   return weekSchedule;

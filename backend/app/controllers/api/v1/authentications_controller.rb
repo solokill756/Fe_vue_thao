@@ -8,7 +8,7 @@ module Api
       # Skip authentication for these actions
       skip_before_action :authenticate_request!,
                          only: %i[sign_up verify_otp resend_otp login
-                                  forget_password google_login]
+                                  forget_password google_login refresh_token]
       # api/v1/auth/sign-up
       def sign_up
         result = UserService.new.create(user_params)
@@ -47,9 +47,13 @@ module Api
                                               login_params[:password])
         if result.success?
           user = result.data
-          token = encode_token({ user_id: user.id })
-          render_success({ user: UserSerializer.serialize(user), token: }, :ok)
-
+          access_token = encode_access_token({ user_id: user.id })
+          refresh_token = encode_refresh_token({ user_id: user.id })
+          render_success({ 
+            user: UserSerializer.serialize(user), 
+            token: access_token,
+            refresh_token: refresh_token
+          }, :ok)
         else
           render_error result.errors, :unauthorized
         end
@@ -70,10 +74,49 @@ module Api
         result = OAuthService.new.authenticate_google(google_login_params[:id_token])
         if result.success?
           user = result.data
-          token = encode_token({ user_id: user.id })
-          render_success({ user: UserSerializer.serialize(user), token: }, :ok)
+          access_token = encode_access_token({ user_id: user.id })
+          refresh_token = encode_refresh_token({ user_id: user.id })
+          render_success({ 
+            user: UserSerializer.serialize(user), 
+            token: access_token,
+            refresh_token: refresh_token
+          }, :ok)
         else
           render_error result.errors, :unauthorized
+        end
+      end
+
+      # POST /api/v1/auth/refresh-token
+      def refresh_token
+        refresh_token_param = params[:refresh_token]
+        
+        unless refresh_token_param
+          return render_error({ error: 'Refresh token is required' }, :bad_request)
+        end
+
+        begin
+          decoded = JWT.decode(
+            refresh_token_param,
+            Rails.application.secrets.secret_key_base
+          )[0]
+          
+          user = User.find(decoded['user_id'])
+          
+          # Check if user account is active
+          unless user.is_active?
+            return render_error({ error: 'Account has been deactivated' }, :forbidden)
+          end
+          
+          # Generate new tokens
+          access_token = encode_access_token({ user_id: user.id })
+          new_refresh_token = encode_refresh_token({ user_id: user.id })
+          
+          render_success({
+            token: access_token,
+            refresh_token: new_refresh_token
+          }, :ok)
+        rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+          render_error({ error: 'Invalid refresh token' }, :unauthorized)
         end
       end
 
@@ -103,7 +146,15 @@ module Api
         params.require(:user).permit(:id_token)
       end
 
-      def encode_token(payload)
+      def encode_access_token(payload)
+        # Access token expires in 15 minutes
+        payload[:exp] = 15.minutes.from_now.to_i
+        JWT.encode(payload, Rails.application.secrets.secret_key_base)
+      end
+
+      def encode_refresh_token(payload)
+        # Refresh token expires in 7 days
+        payload[:exp] = 7.days.from_now.to_i
         JWT.encode(payload, Rails.application.secrets.secret_key_base)
       end
     end

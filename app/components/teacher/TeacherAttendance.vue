@@ -91,10 +91,12 @@ const selectedDateOption = ref<string>('custom');
 const searchQuery = ref('');
 const saving = ref(false);
 const loading = ref(false);
+const isLoadingSession = ref(false); // Flag to prevent multiple simultaneous API calls
 
 const classes = ref<Array<{ id: number; name: string }>>([]);
 const attendanceList = ref<AttendanceStudent[]>([]);
 const currentSessionId = ref<number | null>(null);
+const currentSessionDate = ref<string | null>(null); // Track which date the current session is for
 const classSchedule = ref<Record<string, string> | null>(null);
 const upcomingClassDates = ref<
   Array<{ value: string; label: string; time?: string }>
@@ -144,16 +146,43 @@ const handleClassChange = async () => {
     classSchedule.value = null;
     upcomingClassDates.value = [];
     selectedDateOption.value = 'custom';
+    currentSessionId.value = null;
+    currentSessionDate.value = null;
     return;
   }
 
+  // Reset session tracking when class changes
+  currentSessionId.value = null;
+  currentSessionDate.value = null;
+  
   await loadClassSchedule();
   await loadClassStudents();
   await loadAttendanceSession();
 };
 
 const handleSelectedDateUpdate = (newDate: string) => {
+  if (selectedDate.value === newDate) return; // Prevent unnecessary updates
   selectedDate.value = newDate;
+  
+  // Update selectedTime based on schedule if available
+  if (classSchedule.value && newDate) {
+    try {
+      const date = new Date(newDate);
+      const dayIndex = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      const mondayBasedDay = dayIndex === 0 ? 6 : dayIndex - 1; // Convert to Monday=0
+      const timeStr = classSchedule.value[mondayBasedDay.toString()];
+      
+      if (timeStr) {
+        const startTime = timeStr.split('-')[0]?.trim();
+        if (startTime) {
+          selectedTime.value = startTime;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to extract time from schedule:', error);
+    }
+  }
+  
   // Trigger date change after value is updated
   nextTick(() => {
     if (selectedClassId.value) {
@@ -178,17 +207,18 @@ const handleDateOptionChange = () => {
 };
 
 const handleDateChange = async () => {
-  if (selectedClassId.value) {
+  if (selectedClassId.value && !isLoadingSession.value) {
     await loadAttendanceSession();
   }
 };
 
 // Watch for date changes as backup (after handleDateChange is defined)
+// Use immediate: false to prevent initial trigger
 watch(selectedDate, (newDate, oldDate) => {
-  if (newDate !== oldDate && selectedClassId.value && newDate) {
+  if (newDate !== oldDate && selectedClassId.value && newDate && !isLoadingSession.value) {
     handleDateChange();
   }
-});
+}, { immediate: false });
 
 const loadClassSchedule = async () => {
   if (!selectedClassId.value) return;
@@ -241,44 +271,25 @@ const calculateUpcomingDates = (schedule: any) => {
   today.setHours(0, 0, 0, 0);
   const dates: Array<{ value: string; label: string; time?: string }> = [];
 
-  // Get next 4 weeks of class dates
-  for (let week = 0; week < 4; week++) {
+
+  for (let week = -4; week < 1; week++) {
     for (const dayIndex of dayIndices) {
+      
       const date = new Date(today);
-      const currentDay = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      
+    
+      const currentDay = date.getDay(); 
+      const mondayBasedDay = currentDay === 0 ? 6 : currentDay - 1; 
+      
+      const daysToMondayOfTargetWeek = week * 7 - mondayBasedDay;
+      
+      date.setDate(date.getDate() + daysToMondayOfTargetWeek + dayIndex);
 
-      // Convert to Monday=0 format for calculation
-      const mondayBasedDay = currentDay === 0 ? 6 : currentDay - 1;
-
-      // Calculate days until next occurrence
-      let daysToAdd = dayIndex - mondayBasedDay;
-      if (daysToAdd <= 0) daysToAdd += 7; // If already passed this week, get next week
-
-      date.setDate(date.getDate() + daysToAdd + week * 7);
-
-      // Check if this is today and class time has passed
-      if (week === 0 && daysToAdd === 0) {
-        const timeStr = schedule[dayIndex.toString()];
-        if (timeStr) {
-          const [startTime] = timeStr.split('-');
-          const [hours, minutes] = startTime.split(':').map(Number);
-          const classTime = new Date(date);
-          classTime.setHours(hours, minutes, 0, 0);
-          const now = new Date();
-          if (classTime < now) {
-            date.setDate(date.getDate() + 7);
-          }
-        }
-      }
-
-      // Format date as YYYY-MM-DD in local timezone (not UTC)
-      // This prevents timezone conversion issues
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const dateStr = `${year}-${month}-${day}`;
       if (!dateStr || isNaN(date.getTime())) {
-        // Skip invalid dates
         continue;
       }
 
@@ -310,32 +321,34 @@ const calculateUpcomingDates = (schedule: any) => {
     }
   }
 
-  // Sort by date
+  
   dates.sort((a, b) => a.value.localeCompare(b.value));
 
-  // Limit to next 8 dates
-  upcomingClassDates.value = dates.slice(0, 8);
+  
+  upcomingClassDates.value = dates.slice(-20);
 
-  // Auto-select first upcoming date when class is selected
+
   if (upcomingClassDates.value.length > 0) {
-    const firstDate = upcomingClassDates.value[0];
-    if (firstDate && firstDate.value) {
-      // Use nextTick to ensure reactive update
-      nextTick(() => {
-        selectedDateOption.value = firstDate.value;
-        selectedDate.value = firstDate.value;
-        selectedTime.value = firstDate.time || '00:00';
-
-        // Trigger date change after selecting
+    const todayStr = today.toISOString().split('T')[0];
+    const todayDateOption = upcomingClassDates.value.find(d => d.value === todayStr);
+    const dateToSelect = todayDateOption || upcomingClassDates.value[upcomingClassDates.value.length - 1];
+    
+    if (dateToSelect && dateToSelect.value) {
+      if (selectedDate.value !== dateToSelect.value) {
         nextTick(() => {
-          if (selectedClassId.value) {
-            handleDateChange();
-          }
+          selectedDateOption.value = dateToSelect.value;
+          selectedDate.value = dateToSelect.value;
+          selectedTime.value = dateToSelect.time || '00:00';
+
+          nextTick(() => {
+            if (selectedClassId.value && !isLoadingSession.value) {
+              handleDateChange();
+            }
+          });
         });
-      });
+      }
     }
   } else {
-    // If no dates available, reset to custom
     selectedDateOption.value = 'custom';
   }
 };
@@ -349,7 +362,6 @@ const loadClassStudents = async () => {
   try {
     loading.value = true;
 
-    // Load class detail with students
     const response = await fetchTeacherClassDetail(
       Number(selectedClassId.value)
     );
@@ -366,22 +378,14 @@ const loadClassStudents = async () => {
       return;
     }
 
-    let totalSessions = Object.keys(classDetail.raw_schedule || {}).length * 4;
-    // try {
-    //   const sessionsResponse = await getAttendanceSessionsByClass(
-    //     Number(selectedClassId.value)
-    //   );
-    //   totalSessions = sessionsResponse.data?.sessions?.length || 0;
-    // } catch (error) {}
-
     attendanceList.value = classDetail.students_list.map((student: any) => ({
       id: student.id,
       name: student.name || 'N/A',
       student_code: student.student_code || undefined,
       status: 'present' as const,
       note: '',
-      sessions_attended: student.sessions_attended || 0,
-      total_sessions: totalSessions,
+      sessions_attended: student.sessions_attended ?? 0,
+      total_sessions: student.total_sessions ?? 0,
       avatar: student.avatar || undefined,
       attendance_record_id: undefined,
     }));
@@ -396,10 +400,65 @@ const loadClassStudents = async () => {
 
 const loadAttendanceSession = async () => {
   if (!selectedClassId.value || !selectedDate.value) return;
+  
+  // Prevent multiple simultaneous calls
+  if (isLoadingSession.value) return;
+  
+  
 
   try {
+    isLoadingSession.value = true;
     loading.value = true;
 
+    // First, try to get existing sessions for this class and date
+    try {
+      const sessionsResponse = await getAttendanceSessionsByClass(
+        Number(selectedClassId.value)
+      );
+      
+      const sessions = sessionsResponse.data?.sessions || [];
+      const existingSession = sessions.find(
+        (s: any) => s.date === selectedDate.value
+      );
+      
+      if (existingSession) {
+        // Use existing session
+        currentSessionId.value = existingSession.id;
+        currentSessionDate.value = selectedDate.value;
+        
+        // Load attendance records
+        const recordsResponse = await getAttendanceRecords(
+          Number(selectedClassId.value),
+          existingSession.id
+        );
+
+        const records = recordsResponse.data || [];
+        if (records.length > 0) {
+          attendanceList.value = attendanceList.value.map((student) => {
+            const record = records.find((r: any) => r.student_id === student.id);
+            if (record) {
+              return {
+                ...student,
+                status: mapStatusFromApi(record.status),
+                note: record.note || '',
+                attendance_record_id: record.id,
+                attendance_session_id: existingSession.id,
+              };
+            }
+            return student;
+          });
+        }
+        
+        loading.value = false;
+        isLoadingSession.value = false;
+        return;
+      }
+    } catch (error) {
+      // If getting sessions fails, continue to create new one
+      console.warn('Failed to get existing sessions:', error);
+    }
+
+    // No existing session found, create a new one
     const sessionResponse = await createAttendanceSession(
       Number(selectedClassId.value),
       selectedDate.value,
@@ -412,6 +471,7 @@ const loadAttendanceSession = async () => {
     }
 
     currentSessionId.value = sessionId;
+    currentSessionDate.value = selectedDate.value;
 
     try {
       const recordsResponse = await getAttendanceRecords(
@@ -437,13 +497,14 @@ const loadAttendanceSession = async () => {
         });
       }
     } catch (error) {
-      // If no records exist yet, that's fine - we'll create them when saving
+      toast.error(getErrorMessage(error, 'teacher.attendance', t));
     }
   } catch (error) {
     const errorMsg = getErrorMessage(error, 'teacher.attendance', t);
     toast.error(errorMsg);
   } finally {
     loading.value = false;
+    isLoadingSession.value = false;
   }
 };
 
@@ -473,8 +534,10 @@ const mapStatusToApi = (
     case 'late':
       return 'late';
     case 'excused':
+    case 'absent_w_reason':
       return 'absent_w_reason';
     case 'absent':
+    case 'absent_no_reason':
       return 'absent_no_reason';
     default:
       return 'present';
@@ -524,9 +587,13 @@ const alertParent = (student: AttendanceStudent) => {
 };
 
 const handleStudentStatusChange = (studentId: number, status: string) => {
-  const student = attendanceList.value.find((s) => s.id === studentId);
-  if (student) {
-    student.status = status as AttendanceStudent['status'];
+  const index = attendanceList.value.findIndex((s) => s.id === studentId);
+  if (index !== -1) {
+    const student = attendanceList.value[index];
+    if (student) {
+    
+      student.status = status as AttendanceStudent['status'];
+    }
   }
 };
 
@@ -570,27 +637,30 @@ const saveAttendance = async () => {
 
     const classId = Number(selectedClassId.value);
     const sessionId = currentSessionId.value;
-
     // Save or update attendance records for each student
     const promises = attendanceList.value.map(async (student) => {
+      const mappedStatus = mapStatusToApi(student.status);
       const recordData = {
-        status: mapStatusToApi(student.status),
+        status: mappedStatus,
         note: student.note || '',
       };
-
       if (
         student.attendance_record_id &&
         student.attendance_session_id === sessionId
       ) {
-        // Update existing record
-        return updateAttendanceRecord(
-          classId,
-          sessionId,
-          student.attendance_record_id,
-          recordData
-        );
+        try {
+          const result = await updateAttendanceRecord(
+            classId,
+            sessionId,
+            student.attendance_record_id,
+            recordData
+          );
+          return result;
+        } catch (error) {
+          console.error('Error updating record:', error);
+          throw error;
+        }
       } else {
-        // Create new record
         return createAttendanceRecord(classId, sessionId, {
           student_id: student.id,
           ...recordData,
@@ -599,22 +669,9 @@ const saveAttendance = async () => {
     });
 
     await Promise.all(promises);
-
-    // Update attendance_record_id for newly created records
-    const recordsResponse = await getAttendanceRecords(classId, sessionId);
-    const records = recordsResponse.data || [];
-
-    attendanceList.value = attendanceList.value.map((student) => {
-      const record = records.find((r: any) => r.student_id === student.id);
-      if (record) {
-        return {
-          ...student,
-          attendance_record_id: record.id,
-        };
-      }
-      return student;
-    });
-
+    await loadClassStudents();
+    await loadAttendanceSession();
+    
     toast.success(t('teacher.attendance.messages.saveSuccess'));
   } catch (error) {
     const errorMsg = getErrorMessage(error, 'teacher.attendance', t);

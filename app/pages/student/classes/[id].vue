@@ -3,7 +3,8 @@
     <CommonLoadingSpinner v-if="pending" :text="t('loading.classes')" />
     <CommonBaseError
       v-else-if="error"
-      :error="t('error.fetchClass')"
+      :error="error"
+      :title="$t('student.classes.errorTitle')"
       @retry="refetch"
     />
     <StudentClassDetailView
@@ -35,6 +36,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import type { StudentClass } from 'app/types/class';
 import { formatScheduleObject } from '../../../utils/scheduleFormatter';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import StudentClassDetailView from '../../../components/student/classes/StudentClassDetailView.vue';
 
 definePageMeta({
@@ -48,7 +50,6 @@ const router = useRouter();
 const toast = useToast();
 const classApi = useClassApi();
 const { startLoading, stopLoading } = useLoading();
-const { fetchAssignmentDetail } = useAssignmentApi();
 
 // Fetch class data from student classes
 const {
@@ -58,23 +59,26 @@ const {
   refresh: refetch,
 } = await useAsyncData(`student-class-${route.params.id}`, async () => {
   try {
-    const result = await fetchAssignmentDetail(Number(route.params.id));
+    const classId = Number(route.params.id);
+    const response = await classApi.fetchStudentClassDetail(classId);
+    const foundClass = response.data;
+
     // Transform to StudentClass format
     const transformedClass = {
-      id: result.data.school_class.id.toString(),
-      code: result.data.school_class.id.toString(),
-      name: result.data.school_class.name,
-      teacher: result.data.teacher_name,
-      schedule: formatScheduleObject(result.data.school_class.schedule),
+      id: foundClass.class_id.toString(),
+      code: foundClass.class_id.toString(),
+      name: foundClass.class_name,
+      teacher: foundClass.teacher_name,
+      schedule: formatScheduleObject(foundClass.schedule), // Formatted string for display
+      rawSchedule: foundClass.schedule, // Raw schedule object for calendar parsing
       room: 'N/A',
-      attended: 0,
-      totalSessions:
-        Object.keys(result.data.school_class.schedule || {}).length * 4,
-      status: result.data.school_class.status,
-      class_id: result.data.school_class.id,
+      attended: foundClass.sessions_attended || 0,
+      totalSessions: foundClass.total_sessions || Object.keys(foundClass.schedule || {}).length * 4, // Use backend calculated value, fallback to old calculation
+      status: foundClass.status,
+      class_id: foundClass.class_id,
     } as StudentClass;
 
-    console.log('[Class Detail] Transformed class:', transformedClass);
+    console.log('[Class Detail] Transformed class:', foundClass.schedule);
     return transformedClass;
   } catch (error) {
     console.error('[Class Detail] Error fetching class:', error);
@@ -84,15 +88,10 @@ const {
 
 const classData = computed(() => {
   const data = studentClassesData.value;
-  console.log('[Class Detail] classData computed:', data);
+
   return data;
 });
 
-// Debug: Log component state
-console.log('[Class Detail] Component mounted');
-console.log('[Class Detail] pending:', pending);
-console.log('[Class Detail] error:', error);
-console.log('[Class Detail] classData:', classData);
 
 const handleBack = () => {
   router.push('/student/classes');
@@ -109,13 +108,16 @@ const handleRequestLeave = async (cls: StudentClass) => {
         toast.success(t('student.classes.leave.cancelSuccess'));
         router.push('/student/classes');
       } catch (error) {
-        toast.error(t('student.classes.leave.cancelError'));
+        toast.error(
+          getErrorMessage(error, 'student.classes.', t) ||
+            t('student.classes.leave.cancelError')
+        );
       } finally {
         stopLoading();
       }
     }
   } else {
-    // Show leave request modal - we'll need to handle this differently
+   
     toast.info(t('student.classes.leave.requestInfo'));
   }
 };

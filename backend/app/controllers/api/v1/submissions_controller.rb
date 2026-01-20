@@ -54,6 +54,25 @@ module Api
         render_error(e.message, :internal_server_error)
       end
 
+      # PATCH /api/v1/submissions/:id
+      def update
+        teacher_id = @current_user.role == 'teacher' ? @current_user.teacher.user_id : nil
+        result = SubmissionService.new.grade_submission(params[:id], teacher_id, update_params)
+
+        if result.success?
+          render_success(SubmissionSerializer.serialize(result.data), :ok)
+        else
+          status = if result.errors[:error]&.include?('permission')
+                     :forbidden
+                   elsif result.errors[:error]&.include?('not found')
+                     :not_found
+                   else
+                     :unprocessable_entity
+                   end
+          render_error(result.errors, status)
+        end
+      end
+
       private
 
       def submission_params
@@ -62,7 +81,11 @@ module Api
       end
 
       def query_params
-        params.permit(:page, :per_page, :assignment_id)
+        params.permit(:page, :per_page, :assignment_id, :class_id)
+      end
+
+      def update_params
+        params.require(:submission).permit(:score, :teacher_feedback, :status)
       end
     end
   end

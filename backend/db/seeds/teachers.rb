@@ -92,7 +92,7 @@ teacher_users.each_with_index do |user, index|
   data = teacher_data[index] || teacher_data[0]
   
   Teacher.create!(
-    user_id: user.user_id,
+    user_id: user.id,
     bio: data[:bio],
     qr_code: "QR-#{user.user_id}",
     package_id: data[:package_id],

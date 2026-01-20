@@ -44,14 +44,19 @@ class Assignment < ApplicationRecord
     due_date.present? && due_date < Time.current
   end
 
-  delegate :count, to: :submissions, prefix: true
-
-  def graded_submissions_count
-    submissions.where(status: 'graded').count
+  # Count only based on latest submission per student
+  def submissions_count
+    latest_submissions_per_student.count
   end
 
+  # Count only based on latest submission per student
+  def graded_submissions_count
+    latest_submissions_per_student.count { |s| s.status == 'graded' }
+  end
+
+  # Count only based on latest submission per student
   def submitted_submissions_count
-    submissions.where(status: %w[submitted late]).count
+    latest_submissions_per_student.count { |s| %w[submitted late].include?(s.status) }
   end
 
   def submission_status_for_student(student)
@@ -61,5 +66,16 @@ class Assignment < ApplicationRecord
     return 'no_submission' unless latest_submission
 
     latest_submission.status
+  end
+
+  def latest_submissions_per_student
+
+    submissions
+      .includes(:student)
+      .group_by(&:student_id)
+      .map { |_student_id, student_submissions| student_submissions.max_by(&:submitted_at) }
+      .compact
+      .sort_by(&:submitted_at)
+      .reverse
   end
 end

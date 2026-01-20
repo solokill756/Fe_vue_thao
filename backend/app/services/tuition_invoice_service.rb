@@ -40,7 +40,7 @@ class TuitionInvoiceService
   end
 
   def find(id, student)
-    invoice = student.tuition_invoices.find_by(id: id)
+    invoice = student.tuition_invoices.includes(school_class: :teacher).find_by(id: id)
     if invoice
       Result.success(invoice)
     else
@@ -51,7 +51,7 @@ class TuitionInvoiceService
   end
 
   def list_by_student(student)
-    invoices = student.tuition_invoices.not_paid
+    invoices = student.tuition_invoices.includes(school_class: :teacher).not_paid
     Result.success(invoices)
   rescue StandardError => e
     Result.failure({ error: e.message })

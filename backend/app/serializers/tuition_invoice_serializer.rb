@@ -18,7 +18,8 @@ class TuitionInvoiceSerializer
       paid_date: attrs['paid_date'],
       invoice_code: attrs['invoice_code'],
       created_at: attrs['created_at'],
-      updated_at: attrs['updated_at']
+      updated_at: attrs['updated_at'],
+      teacher_qr_code: @invoice.school_class&.teacher&.qr_code
     }
   end
 

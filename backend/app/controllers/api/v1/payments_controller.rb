@@ -50,11 +50,15 @@ module Api
         # Convert amount to BigDecimal to ensure proper type
         amount = params[:amount].present? ? BigDecimal(params[:amount].to_s) : invoice.amount
 
+        # Set status based on payment method
+        # Cash: completed immediately, Transfer: pending (needs teacher approval)
+        transaction_status = params[:method] == 'cash' ? 'completed' : 'pending'
+
         transaction_params = {
           amount: amount,
           method: params[:method],
           type: 'tuition_fee',
-          status: 'pending',
+          status: transaction_status,
           payment_date: Date.current,
           description: invoice.title
         }
@@ -62,7 +66,10 @@ module Api
         result = TransactionService.new.record(invoice.id, transaction_params)
 
         if result.success?
-          invoice.mark_as_paid!
+        
+          if transaction_status == 'completed'
+            invoice.mark_as_paid!
+          end
           { success: true, transaction_id: result.data.id }
         else
           { success: false, error: result.errors }

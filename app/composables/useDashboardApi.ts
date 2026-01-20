@@ -1,5 +1,6 @@
 import type { ApiResponseSuccess } from '@/types/common';
 
+
 export interface DashboardData {
   student_info: {
     name: string;
@@ -39,9 +40,8 @@ export const useDashboardApi = () => {
   const apiBase = config.public.apiBase;
 
   const getDashboard = () =>
-    $fetch<ApiResponseSuccess<DashboardData>>(`${apiBase}/student-dashboard`, {
+    apiFetch<ApiResponseSuccess<DashboardData>>(`${apiBase}/student-dashboard`, {
       method: 'GET',
-      headers: getAuthHeader(),
     });
 
   return {

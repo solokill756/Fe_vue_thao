@@ -7,7 +7,9 @@ export interface UserModel {
   updated_at: string;
   display_name: string;
   is_active: boolean;
+  otp_verified?: boolean;
   phone_number: string | null;
   photo_url: string | null;
   user_id: number | null;
+  teacher_qr_code: string | null;
 }

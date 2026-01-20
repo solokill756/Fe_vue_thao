@@ -37,7 +37,7 @@
           >
           <span
             ><i class="fa-regular fa-clock mr-1"></i>
-            {{ selectedClass.schedule }}</span
+           {{ selectedClass.schedule }}</span
           >
           <span
             ><i class="fa-solid fa-location-dot mr-1"></i>
@@ -67,8 +67,8 @@ import type { StudentClass } from 'app/types/class';
 interface Props {
   selectedClass: StudentClass;
 }
-
-defineProps<Props>();
+const props = defineProps<Props>();
+console.log(props.selectedClass);
 defineEmits<{
   back: [];
 }>();

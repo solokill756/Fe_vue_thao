@@ -14,9 +14,9 @@ module Api
           invoices = invoices.search_by_title(query_params[:title]) if query_params[:title].present?
           invoices = invoices.by_due_date
           ans = paginate(invoices, { per_page: query_params[:per_page] || 10, page: query_params[:page] || 1 })
-          # Load records using find_by_sql to avoid ActiveRecord callbacks and associations
+          # Load records with eager loading to avoid N+1 queries
           record_ids = ans[:records].pluck(:id)
-          records_array = TuitionInvoice.where(id: record_ids).order(due_date: :asc).to_a
+          records_array = TuitionInvoice.includes(school_class: :teacher).where(id: record_ids).order(due_date: :asc).to_a
           render_success(
             {
               invoices: TuitionInvoiceSerializer.serialize_collection(records_array),

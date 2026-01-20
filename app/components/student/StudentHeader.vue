@@ -12,6 +12,9 @@
       </p>
     </div>
     <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <CommonLanguageSwitcher />
+
       <!-- Notifications -->
       <button
         class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors relative"

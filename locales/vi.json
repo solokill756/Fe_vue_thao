@@ -132,6 +132,7 @@
       "allStatus": "Tất cả",
       "noSubmission": "Chưa nộp",
       "submitted": "Đã nộp",
+      "late": "Nộp trễ",
       "graded": "Đã chấm",
       "noAssignmentsFound": "Không tìm thấy bài tập nào.",
       "taskContent": "Nội dung bài tập",
@@ -330,6 +331,8 @@
         "description": "Xin nghỉ phép từ lớp",
         "date": "Ngày xin nghỉ",
         "selectDate": "Chọn ngày",
+        "loadingDates": "Đang tải danh sách ngày...",
+        "noDatesAvailable": "Không có ngày nào khả dụng trong khoảng thời gian này",
         "leaveType": "Loại xin nghỉ",
         "temporary": "Xin nghỉ tạm thời",
         "permanent": "Xin nghỉ vĩnh viễn",
@@ -342,7 +345,8 @@
         "cancelError": "Có lỗi xảy ra khi hủy đơn đăng ký lớp học. Vui lòng thử lại.",
         "errorMessage": "Vui lòng nhập lý do xin nghỉ",
         "successMessage": "Gửi đơn xin nghỉ thành công. Chờ duyệt từ giáo viên.",
-        "errorSubmitting": "Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại."
+        "errorSubmitting": "Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại.",
+        "requestInfo": "Vui lòng sử dụng tab Điểm danh để xin nghỉ phép"
       },
       "errorTitle": "Lỗi tải danh sách lớp học",
       "detail": {
@@ -405,7 +409,9 @@
     "studentProfile": "Đang tải hồ sơ học sinh...",
     "assignments": "Đang tải bài tập...",
     "classes": "Đang tải lớp học...",
-    "dashboard": "Đang tải trang chủ..."
+    "dashboard": "Đang tải trang chủ...",
+    "assignmentDetail": "Đang tải chi tiết bài tập...",
+    "submissions": "Đang tải bài nộp..."
   },
   "error": {
     "fetchAssignments": "Không thể tải danh sách bài tập. Vui lòng thử lại.",
@@ -456,18 +462,7 @@
       "noClassesToday": "Không có lớp học hôm nay",
       "aiSuggestion": "Thầy ơi, lớp Toán 12A có 3 bạn điểm thấp liên tiếp. Thầy có muốn tôi soạn tin nhắn nhắc nhở phụ huynh không?"
     },
-    "attendance": {
-      "selectClass": "Chọn lớp học",
-      "totalStudents": "Sĩ số",
-      "student": "Học sinh",
-      "present": "Có mặt",
-      "absentExcused": "Vắng CP",
-      "absentUnexcused": "Vắng KP",
-      "late": "Đi muộn",
-      "note": "Ghi chú",
-      "enterNote": "Nhập ghi chú...",
-      "save": "Lưu điểm danh"
-    },
+
     "finance": {
       "monthlyCollection": "Tình hình thu học phí - Tháng 1/2024",
       "allClasses": "Tất cả lớp",
@@ -478,9 +473,137 @@
       "noOutstanding": "Không có khoản nợ nào",
       "debt": "Nợ",
       "dueDate": "Hạn",
-      "reminderSent": "Đã gửi nhắc nhở",
       "remindersSent": "Đã gửi nhắc nhở tới tất cả",
-      "send": "Gửi"
+      "send": "Gửi",
+      "selectClass": "Chọn lớp học",
+      "searchPlaceholder": "Tìm học sinh...",
+      "sendAllReminders": "Nhắc nợ tất cả",
+      "loading": "Đang tải dữ liệu học phí...",
+      "errorLoading": "Không thể tải dữ liệu học phí. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "selectClassPrompt": "Vui lòng chọn lớp học để xem thông tin học phí",
+      "noStudents": "Không có học sinh nào trong lớp này",
+      "reminderSent": "Đã gửi nhắc nhở thành công",
+      "errorSendingReminder": "Không thể gửi nhắc nhở. Vui lòng thử lại.",
+      "allRemindersSent": "Đã gửi nhắc nhở tới {count} học sinh",
+      "errorSendingReminders": "Không thể gửi nhắc nhở. Vui lòng thử lại.",
+      "historyComingSoon": "Tính năng xem lịch sử đang được phát triển",
+      "pendingTransactions": "Giao dịch chờ duyệt",
+      "noPendingTransactions": "Không có giao dịch nào chờ duyệt",
+      "errorLoadingTransactions": "Không thể tải danh sách giao dịch. Vui lòng thử lại.",
+      "transactionsTable": {
+        "student": "Học sinh",
+        "invoice": "Mã hóa đơn",
+        "amount": "Số tiền",
+        "method": "Hình thức",
+        "date": "Ngày tạo",
+        "actions": "Thao tác",
+        "cash": "Tiền mặt",
+        "transfer": "Chuyển khoản",
+        "approve": "Duyệt",
+        "reject": "Từ chối",
+        "confirmApprove": "Bạn có chắc chắn muốn duyệt giao dịch này?",
+        "confirmReject": "Bạn có chắc chắn muốn từ chối giao dịch này?",
+        "approveSuccess": "Đã duyệt giao dịch thành công!",
+        "rejectSuccess": "Đã từ chối giao dịch!",
+        "approveError": "Không thể duyệt giao dịch. Vui lòng thử lại.",
+        "rejectError": "Không thể từ chối giao dịch. Vui lòng thử lại."
+      },
+      "stats": {
+        "collectedThisMonth": "Đã thu",
+        "outstandingDebt": "Phải thu / Nợ",
+        "expiringSoon": "Sắp hết hạn gói",
+        "students": "học sinh",
+        "studentsWithDebt": "học sinh chưa đóng",
+        "needRenewal": "Cần nhắc gia hạn"
+      },
+      "table": {
+        "student": "Học sinh",
+        "package": "Gói học / Số buổi",
+        "status": "Trạng thái",
+        "amount": "Số tiền",
+        "actions": "Thao tác",
+        "parent": "PH",
+        "remaining": "Còn",
+        "sessions": "buổi",
+        "expiringSoon": "Sắp hết hạn"
+      },
+      "status": {
+        "paid": "Đã đóng",
+        "debt": "Nợ phí",
+        "expiringSoon": "Sắp đến hạn",
+        "new": "Mới đăng ký"
+      },
+      "actions": {
+        "recordPayment": "Thu tiền",
+        "sendReminder": "Gửi nhắc nhở",
+        "viewHistory": "Lịch sử",
+        "createInvoice": "Tạo hóa đơn"
+      },
+      "paymentModal": {
+        "title": "Ghi nhận thu tiền",
+        "package": "Gói",
+        "amount": "Số tiền thu",
+        "maxAmount": "Tối đa",
+        "paymentMethod": "Hình thức thanh toán",
+        "cash": "Tiền mặt",
+        "transfer": "Chuyển khoản",
+        "note": "Ghi chú (Tùy chọn)",
+        "notePlaceholder": "Ví dụ: Phụ huynh đóng trực tiếp...",
+        "sendReceipt": "Gửi biên lai điện tử cho phụ huynh",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận thu",
+        "success": "Ghi nhận thanh toán thành công!",
+        "error": "Không thể ghi nhận thanh toán. Vui lòng thử lại.",
+        "invalidAmount": "Vui lòng nhập số tiền hợp lệ"
+      },
+      "createInvoiceModal": {
+        "title": "Tạo hóa đơn",
+        "package": "Gói",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Mô tả hóa đơn (tùy chọn)",
+        "amount": "Số tiền",
+        "dueDate": "Hạn thanh toán",
+        "status": "Trạng thái",
+        "statusPending": "Chờ thanh toán",
+        "statusPaid": "Đã thanh toán",
+        "statusOverdue": "Quá hạn",
+        "titlePlaceholder": "Ví dụ: Học phí tháng 1/2024",
+        "cancel": "Hủy",
+        "confirm": "Tạo hóa đơn",
+        "success": "Tạo hóa đơn thành công!",
+        "error": "Không thể tạo hóa đơn. Vui lòng thử lại.",
+        "invalidData": "Vui lòng điền đầy đủ thông tin"
+      },
+      "historyModal": {
+        "title": "Lịch sử đóng phí",
+        "student": "Học sinh",
+        "loading": "Đang tải lịch sử...",
+        "noTransactions": "Chưa có giao dịch nào.",
+        "close": "Đóng",
+        "footer": "* Dữ liệu hiển thị trong 12 tháng gần nhất",
+        "transactionContent": "Thanh toán học phí",
+        "table": {
+          "date": "Ngày GD",
+          "content": "Nội dung",
+          "method": "Hình thức",
+          "amount": "Số tiền",
+          "status": "Trạng thái"
+        },
+        "method": {
+          "cash": "Tiền mặt",
+          "transfer": "Chuyển khoản"
+        },
+        "status": {
+          "completed": "Hoàn thành",
+          "pending": "Chờ xử lý",
+          "failed": "Thất bại"
+        },
+        "error": {
+          "noData": "Không có dữ liệu để hiển thị",
+          "loading": "Không thể tải lịch sử. Vui lòng thử lại."
+        }
+      }
     },
     "classes": {
       "noClasses": "Bạn chưa có lớp học nào",
@@ -518,7 +641,7 @@
         "subjectPlaceholder": "Ví dụ: Toán, Lý, Hóa...",
         "gradeLevel": "Khối lớp",
         "gradeLevelPlaceholder": "VD: Lớp 10, Lớp 11...",
-        "feePerSession": "Học phí/buổi (VNĐ)",
+        "monthlyTuitionFee": "Học phí/tháng (VNĐ)",
         "schedule": "Lịch học",
         "to": "đến",
         "description": "Mô tả",
@@ -603,16 +726,22 @@
         "noFixedSchedule": "Chưa có lịch học cố định",
         "change": "Thay đổi",
         "upcomingSessions": "Danh sách buổi học sắp tới",
+        "makeupClasses": "Học bù",
         "addSession": "Thêm buổi học",
+        "addMakeupClass": "Thêm buổi học bù",
         "loading": "Đang tải...",
         "noUpcomingSessions": "Chưa có buổi học sắp tới",
+        "noMakeupClasses": "Chưa có buổi học bù",
         "upcoming": "Sắp diễn ra",
+        "makeup": "Học bù",
         "edit": "Sửa",
         "delete": "Xóa",
         "modal": {
           "editFixedSchedule": "Chỉnh sửa lịch học cố định",
           "editSession": "Sửa buổi học",
+          "editMakeupClass": "Sửa buổi học bù",
           "addSession": "Thêm buổi học",
+          "addMakeupClass": "Thêm buổi học bù",
           "description": "Lịch học cố định hiện tại chỉ hỗ trợ định dạng JSON. Ví dụ: số 0 là Thứ 2, số 2 là Thứ 4, giá trị là giờ học (VD: 17:30-19:00)",
           "scheduleJson": "Lịch học (JSON)",
           "schedulePlaceholder": "Nhập JSON, ví dụ: số 0 là Thứ 2, số 2 là Thứ 4",
@@ -670,7 +799,7 @@
         "subjectPlaceholder": "Nhập môn học",
         "gradeLevel": "Khối lớp",
         "gradeLevelPlaceholder": "VD: Lớp 10, Lớp 11...",
-        "feePerSession": "Học phí/buổi (VNĐ)",
+        "monthlyTuitionFee": "Học phí/tháng (VNĐ)",
         "feePlaceholder": "0",
         "status": "Trạng thái",
         "statusActive": "Đang hoạt động",
@@ -768,12 +897,115 @@
       "selectAssignment": "Chọn bài tập",
       "newAssignment": "Tạo bài tập mới",
       "student": "Học sinh",
-      "score": "Điểm",
+      "score": "Điểm số",
       "comment": "Nhận xét",
       "status": "Trạng thái",
       "graded": "Đã chấm",
       "pending": "Chưa chấm",
-      "selectAssignmentFirst": "Vui lòng chọn bài tập trước"
+      "selectAssignmentFirst": "Vui lòng chọn bài tập trước",
+      "searchPlaceholder": "Tìm kiếm bài tập...",
+      "errorLoading": "Không thể tải danh sách bài tập",
+      "noAssignments": "Không có bài tập nào",
+      "statusOpen": "Đang mở",
+      "statusClosed": "Đã đóng",
+      "dueDate": "Hạn",
+      "gradingProgress": "Tiến độ chấm",
+      "submissions": "bài",
+      "total": "Tổng",
+      "students": "HS",
+      "backToList": "Quay lại danh sách",
+      "notSubmitted": "chưa nộp",
+      "all": "Tất cả",
+      "needsGrading": "Cần chấm",
+      "lateSubmission": "Nộp muộn",
+      "textSubmission": "Bài làm dạng văn bản",
+      "submittedAt": "Nộp lúc {time}",
+      "viewSubmission": "Xem bài làm",
+      "studentNotSubmitted": "Học sinh này chưa nộp bài.",
+      "feedback": "Nhận xét",
+      "aiFeedbackHint": "Dùng AI tạo nhận xét dựa trên điểm",
+      "aiSuggestion": "AI Gợi ý",
+      "feedbackPlaceholder": "Nhập lời phê của giáo viên...",
+      "previousStudent": "Học sinh trước",
+      "saveAndContinue": "Lưu & Tiếp tục",
+      "nextStudent": "Học sinh sau",
+      "selectStudent": "Chọn một học sinh để bắt đầu chấm.",
+      "enterScore": "Vui lòng nhập điểm số",
+      "enterScoreFirst": "Vui lòng nhập điểm trước để AI gợi ý!",
+      "saveSuccess": "Đã lưu điểm và nhận xét!",
+      "retry": "Thử lại",
+      "cannotGradeMissing": "Không thể chấm điểm cho học sinh chưa nộp bài",
+      "aiFeedback": {
+        "excellent": "Xuất sắc! Cách giải thông minh và ngắn gọn. Tiếp tục phát huy nhé.",
+        "good": "Bài làm khá tốt. Tuy nhiên cần chú ý trình bày cẩn thận hơn ở phần kết luận.",
+        "average": "Đã hiểu bài nhưng còn sai sót trong tính toán. Cần ôn lại công thức nhân ma trận.",
+        "poor": "Bài làm chưa đạt yêu cầu. Em cần xem lại kiến thức cơ bản chương này và làm lại bài tập."
+      },
+      "createModal": {
+        "title": "Tạo bài tập mới",
+        "class": "Lớp học",
+        "selectClass": "Chọn lớp học",
+        "titleLabel": "Tiêu đề bài tập",
+        "titlePlaceholder": "Nhập tiêu đề bài tập",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Nhập mô tả bài tập (tùy chọn)",
+        "dueDate": "Hạn nộp bài",
+        "cancel": "Hủy",
+        "create": "Tạo bài tập",
+        "creating": "Đang tạo...",
+        "success": "Tạo bài tập thành công!",
+        "attachment": "File đính kèm",
+        "dragDropFile": "Kéo thả file vào đây hoặc",
+        "selectFile": "chọn file",
+        "supportedFormats": "Hỗ trợ: PDF, DOCX, JPG, PNG, TXT (Max 100MB)",
+        "errors": {
+          "classRequired": "Vui lòng chọn lớp học",
+          "titleRequired": "Tiêu đề phải có ít nhất 3 ký tự",
+          "dueDateRequired": "Vui lòng chọn hạn nộp bài",
+          "dueDateFuture": "Hạn nộp bài phải là thời gian trong tương lai",
+          "fileTooLarge": "File quá lớn. Tối đa 100MB",
+          "invalidFileType": "Định dạng file không được hỗ trợ"
+        }
+      },
+      "editModal": {
+        "title": "Sửa bài tập",
+        "class": "Lớp học",
+        "titleLabel": "Tiêu đề bài tập",
+        "titlePlaceholder": "Nhập tiêu đề bài tập",
+        "description": "Mô tả",
+        "descriptionPlaceholder": "Nhập mô tả bài tập (tùy chọn)",
+        "dueDate": "Hạn nộp bài",
+        "cancel": "Hủy",
+        "update": "Cập nhật",
+        "updating": "Đang cập nhật...",
+        "success": "Cập nhật bài tập thành công!",
+        "attachment": "File đính kèm mới (tùy chọn)",
+        "currentFile": "File hiện tại",
+        "dragDropFile": "Kéo thả file vào đây hoặc",
+        "selectFile": "chọn file",
+        "supportedFormats": "Hỗ trợ: PDF, DOCX, JPG, PNG, TXT (Max 100MB)",
+        "errors": {
+          "classRequired": "Vui lòng chọn lớp học",
+          "titleRequired": "Tiêu đề phải có ít nhất 3 ký tự",
+          "dueDateRequired": "Vui lòng chọn hạn nộp bài",
+          "dueDateFuture": "Hạn nộp bài phải là thời gian trong tương lai",
+          "fileTooLarge": "File quá lớn. Tối đa 100MB",
+          "invalidFileType": "Định dạng file không được hỗ trợ"
+        }
+      },
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa bài tập này?",
+      "deleteSuccess": "Xóa bài tập thành công!",
+      "errors": {
+        "VALIDATION_ERROR": "Dữ liệu không hợp lệ",
+        "UNAUTHORIZED": "Bạn chưa đăng nhập",
+        "FORBIDDEN": "Bạn không có quyền thực hiện hành động này",
+        "NOT_FOUND": "Không tìm thấy dữ liệu",
+        "BAD_REQUEST": "Yêu cầu không hợp lệ",
+        "INTERNAL_ERROR": "Lỗi hệ thống, vui lòng thử lại sau",
+        "ERROR": "Đã xảy ra lỗi"
+      }
     },
     "ai": {
       "title": "Teacher AI Assistant",
@@ -796,6 +1028,15 @@
     "signUp": "Đăng ký",
     "loading": "Đang tải...",
     "error": "Lỗi",
+    "days": {
+      "sunday": "Chủ nhật",
+      "monday": "Thứ hai",
+      "tuesday": "Thứ ba",
+      "wednesday": "Thứ tư",
+      "thursday": "Thứ năm",
+      "friday": "Thứ sáu",
+      "saturday": "Thứ bảy"
+    },
     "success": "Thành công",
     "cancel": "Hủy",
     "submit": "Gửi",
@@ -817,9 +1058,79 @@
     },
     "errors": {
       "networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.",
-      "serverError": "Lỗi máy chủ. Vui lòng thử lại sau."
+      "serverError": "Lỗi máy chủ. Vui lòng thử lại sau.",
+      "defaultTitle": "Đã xảy ra lỗi",
+      "defaultMessage": "Không thể tải dữ liệu. Vui lòng thử lại sau.",
+      "errorDetails": "Chi tiết lỗi",
+      "retry": "Thử lại"
     },
     "logoutSuccess": "Bạn đã đăng xuất thành công.",
     "logoutError": "Đã xảy ra lỗi trong quá trình đăng xuất. Vui lòng thử lại."
+  },
+  "admin": {
+    "users": {
+      "title": "Quản lý Người dùng",
+      "createUser": "Tạo người dùng mới",
+      "searchPlaceholder": "Tìm kiếm theo email hoặc tên...",
+      "allRoles": "Tất cả vai trò",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Đã kích hoạt",
+      "inactive": "Chưa kích hoạt",
+      "loading": "Đang tải...",
+      "noUsers": "Không có người dùng nào",
+      "tableHeaders": {
+        "id": "ID",
+        "email": "Email",
+        "name": "Tên",
+        "role": "Vai trò",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      },
+      "roles": {
+        "teacher": "Giáo viên",
+        "student": "Học sinh"
+      },
+      "status": {
+        "active": "Đã kích hoạt",
+        "inactive": "Chưa kích hoạt"
+      },
+      "modal": {
+        "createTitle": "Tạo người dùng mới",
+        "editTitle": "Sửa người dùng",
+        "email": "Email",
+        "fullName": "Họ và tên",
+        "password": "Mật khẩu",
+        "passwordPlaceholder": "để trống nếu không đổi",
+        "role": "Vai trò",
+        "phoneNumber": "Số điện thoại",
+        "isActive": "Kích hoạt tài khoản",
+        "cancel": "Hủy",
+        "create": "Tạo",
+        "update": "Cập nhật",
+        "processing": "Đang xử lý...",
+        "errors": {
+          "fillAllFields": "Vui lòng điền đầy đủ thông tin",
+          "passwordRequired": "Vui lòng nhập mật khẩu",
+          "errorOccurred": "Có lỗi xảy ra"
+        },
+        "success": {
+          "create": "Tạo người dùng thành công",
+          "update": "Cập nhật người dùng thành công"
+        }
+      },
+      "toggleStatus": {
+        "confirmLock": "Bạn có chắc muốn khóa tài khoản này?",
+        "confirmActivate": "Bạn có chắc muốn kích hoạt tài khoản này?",
+        "locked": "Đã khóa tài khoản",
+        "activated": "Đã kích hoạt tài khoản",
+        "error": "Có lỗi xảy ra"
+      },
+      "delete": {
+        "confirm": "Bạn có chắc muốn xóa người dùng \"{name}\"?",
+        "success": "Đã xóa người dùng",
+        "error": "Có lỗi xảy ra"
+      }
+    }
   }
 }

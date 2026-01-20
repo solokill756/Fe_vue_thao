@@ -61,8 +61,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { StudentClass } from 'app/types/class';
-import type { Assignment } from '@/types/assignment';
-import type { StudentAttendanceSession } from '@/types/attendance';
+
 import StudentClassDetailHeader from './class-detail/StudentClassDetailHeader.vue';
 import StudentClassDetailTabs from './class-detail/StudentClassDetailTabs.vue';
 import StudentClassOverviewTab from './class-detail/StudentClassOverviewTab.vue';
@@ -70,6 +69,8 @@ import StudentClassAssignmentsTab from './class-detail/StudentClassAssignmentsTa
 import StudentClassAttendanceTab from './class-detail/StudentClassAttendanceTab.vue';
 import StudentClassGradesTab from './class-detail/StudentClassGradesTab.vue';
 import StudentClassDocumentsTab from './class-detail/StudentClassDocumentsTab.vue';
+import type { StudentAttendanceSession } from '@/types/attendance';
+import type { Assignment } from '@/types/assignment';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -131,9 +132,13 @@ const {
 );
 
 const averageGrade = computed(() => {
+  // console.log(assignments.value?.assignments);
   if (!assignments.value?.assignments) return 0;
   const graded = assignments.value.assignments.filter(
-    (a) => a.submission?.score != null
+    (assignment) => {
+      console.log(assignment.submission?.score);
+      return assignment.submission?.score != null;
+    }
   );
   if (graded.length === 0) return 0;
   return (

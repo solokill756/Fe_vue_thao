@@ -92,13 +92,13 @@
 
     <div>
       <div class="flex justify-between items-center mb-4">
-        <h4 class="font-bold text-slate-800">{{ $t('teacher.classes.scheduleTab.upcomingSessions') }}</h4>
+        <h4 class="font-bold text-slate-800">{{ $t('teacher.classes.scheduleTab.makeupClasses') }}</h4>
         <button
           @click="openAddSessionModal"
           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2"
         >
           <i class="fa-solid fa-plus"></i>
-          {{ $t('teacher.classes.scheduleTab.addSession') }}
+          {{ $t('teacher.classes.scheduleTab.addMakeupClass') }}
         </button>
       </div>
 
@@ -117,7 +117,7 @@
         class="text-center py-8 text-slate-500"
       >
         <i class="fa-regular fa-calendar text-4xl mb-2"></i>
-        <p>{{ $t('teacher.classes.scheduleTab.noUpcomingSessions') }}</p>
+        <p>{{ $t('teacher.classes.scheduleTab.noMakeupClasses') }}</p>
       </div>
 
       <div v-else class="space-y-3">
@@ -156,8 +156,8 @@
           </div>
           <div class="flex items-center gap-2">
             <span
-              class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold"
-              >{{ $t('teacher.classes.scheduleTab.upcoming') }}</span
+              class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-bold"
+              >{{ $t('teacher.classes.scheduleTab.makeup') }}</span
             >
             <button
               @click="openEditSessionModal(session)"
@@ -190,7 +190,7 @@
       >
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-bold text-slate-800">
-            {{ editingSession ? $t('teacher.classes.scheduleTab.modal.editSession') : $t('teacher.classes.scheduleTab.modal.addSession') }}
+            {{ editingSession ? $t('teacher.classes.scheduleTab.modal.editMakeupClass') : $t('teacher.classes.scheduleTab.modal.addMakeupClass') }}
           </h3>
           <button
             @click="showSessionModal = false"
@@ -371,21 +371,22 @@ const handleSaveSession = async () => {
   }
 
   try {
-    const dateTime = new Date(`${sessionDate.value}T${sessionTime.value}:00`);
-    const dateTimeString = dateTime.toISOString();
-
+    // Log exactly what user selected (local wall-clock), and let backend handle timezone conversion
+    console.log('Selected session datetime:', `${sessionDate.value} ${sessionTime.value}`);
     if (editingSession.value?.id) {
       await updateAttendanceSession(
         props.classDetail.id,
         editingSession.value.id,
-        dateTimeString,
+        sessionDate.value,
+        sessionTime.value,
         sessionNote.value
       );
       toast.success(t('teacher.classes.scheduleTab.messages.updateSessionSuccess'));
     } else {
       await createAttendanceSession(
         props.classDetail.id,
-        dateTimeString,
+        sessionDate.value,
+        sessionTime.value,
         sessionNote.value
       );
       toast.success(t('teacher.classes.scheduleTab.messages.addSessionSuccess'));

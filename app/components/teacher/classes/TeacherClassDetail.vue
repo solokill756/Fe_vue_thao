@@ -32,7 +32,7 @@
         class="flex gap-2 bg-white p-1 rounded-lg border border-slate-200 shadow-sm"
       >
         <button
-          @click="switchTab('students')"
+          @click="activeTab = 'students'"
           :class="[
             'px-4 py-2 rounded-md text-sm font-bold transition-all',
             activeTab === 'students'
@@ -43,7 +43,7 @@
           {{ $t('teacher.classes.detail.tabs.students') }}
         </button>
         <button
-          @click="switchTab('schedule')"
+          @click="activeTab = 'schedule'"
           :class="[
             'px-4 py-2 rounded-md text-sm font-bold transition-all',
             activeTab === 'schedule'
@@ -54,7 +54,7 @@
           {{ $t('teacher.classes.detail.tabs.schedule') }}
         </button>
         <button
-          @click="switchTab('settings')"
+          @click="activeTab = 'settings'"
           :class="[
             'px-4 py-2 rounded-md text-sm font-bold transition-all',
             activeTab === 'settings'
@@ -119,6 +119,9 @@ const props = defineProps<{
 
 const route = useRoute();
 const { fetchPendingRequests, fetchClassSchedule } = useTeacherClassApi();
+const { t } = useI18n();
+const toast = useToast()
+const text = ref('');
 
 const activeTab = ref<'students' | 'schedule' | 'settings'>(
   props.initialTab || 'students'
@@ -136,6 +139,7 @@ const { data: pendingRequestsData, refresh: refreshPendingRequests } =
       watch: [() => props.classDetail.id],
     }
   );
+
 
 const pendingEnrollments = computed(() => {
   return pendingRequestsData.value?.enrollments || [];
@@ -162,92 +166,6 @@ const {
   }
 );
 
-const createNextAttendanceSession = async () => {
-  const { createAttendanceSession } = useTeacherClassApi();
-  const { t } = useI18n();
-  const toast = useToast();
-
-  try {
-    const schedule = props.classDetail.raw_schedule;
-    if (!schedule || typeof schedule !== 'object') {
-      toast.error(t('teacher.classes.scheduleTab.errors.noSchedule'));
-      return;
-    }
-
-    const dayIndices = Object.keys(schedule)
-      .map(Number)
-      .filter((idx) => !isNaN(idx) && idx >= 0 && idx <= 6);
-
-    if (dayIndices.length === 0) {
-      toast.error(t('teacher.classes.scheduleTab.errors.noSchedule'));
-      return;
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const nextWeekDates: Array<{ date: string; time: string }> = [];
-
-    for (const dayIndex of dayIndices) {
-      const date = new Date(today);
-      const currentDay = date.getDay();
-
-      const mondayBasedDay = currentDay === 0 ? 6 : currentDay - 1;
-
-      let daysToAdd = dayIndex - mondayBasedDay;
-      if (daysToAdd <= 0) daysToAdd += 7;
-
-      if (daysToAdd > 6) continue;
-
-      date.setDate(date.getDate() + daysToAdd);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-
-      if (!dateStr || isNaN(date.getTime())) {
-        continue;
-      }
-
-      const timeStr = schedule[dayIndex.toString()] || '';
-      const timeParts = timeStr ? timeStr.split('-') : [];
-      const startTime: string = timeParts[0] || '00:00';
-
-      nextWeekDates.push({ date: dateStr, time: startTime });
-    }
-
-    if (nextWeekDates.length === 0) {
-      return;
-    }
-
-    nextWeekDates.sort((a, b) => a.date.localeCompare(b.date));
-
-    const promises = nextWeekDates.map(({ date, time }) =>
-      createAttendanceSession(props.classDetail.id, date, time || '00:00')
-    );
-
-    await Promise.all(promises);
-
-    toast.success(
-      t('teacher.classes.scheduleTab.messages.sessionsCreated', {
-        count: nextWeekDates.length,
-      })
-    );
-
-    refreshSchedule();
-  } catch (error) {
-    const errorMsg = getErrorMessage(error, 'teacher.classes.scheduleTab', t);
-    toast.error(errorMsg);
-  }
-};
-
-const switchTab = (tab: 'students' | 'schedule' | 'settings') => {
-  activeTab.value = tab;
-  navigateTo({
-    path: route.path,
-    query: { ...route.query, tab },
-  });
-};
 
 // Refresh data when tab changes
 watch(
@@ -262,20 +180,7 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => scheduleData.value.upcoming_sessions,
-  () => {
-    if (
-      !loadingSchedule.value &&
-      scheduleData.value.upcoming_sessions.length === 0 &&
-      props.classDetail.id
-    ) {
-      createNextAttendanceSession();
-      refreshSchedule();
-    }
-  },
-  { immediate: true }
-);
+
 </script>
 
 <style scoped>

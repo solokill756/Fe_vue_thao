@@ -8,7 +8,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          :placeholder="$t('teacher.classes.list.searchPlaceholder')"
+          :placeholder="$t('teacher.classes.searchPlaceholder')"
           class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 transition-all"
         />
         <i
@@ -135,7 +135,7 @@
               ><i class="fa-regular fa-calendar mr-2 w-4"></i
               >{{ $t('teacher.classes.schedule') }}:</span
             >
-            <span class="font-medium text-slate-700">{{ cls.schedule }}</span>
+            <span class="font-medium text-slate-700">{{ formatScheduleObject(cls.schedule) }}</span>
           </div>
           <div class="flex items-center justify-between text-sm">
             <span class="text-slate-500"
@@ -203,6 +203,7 @@
 
 <script setup lang="ts">
 import type { TeacherClass } from '../../../composables/useTeacherClassApi';
+import { formatScheduleObject } from '../../../utils/scheduleFormatter';
 
 const props = defineProps<{
   classes: TeacherClass[];

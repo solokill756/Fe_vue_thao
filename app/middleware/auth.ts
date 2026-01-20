@@ -7,6 +7,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return navigateTo('/auth');
   }
 
+  // Check if user account is active
+  if (auth.user && !auth.user.is_active && to.path !== '/auth') {
+    auth.logout();
+    return navigateTo('/auth');
+  }
+
   if (auth.user?.role === 'student' && !to.path.startsWith('/student')) {
     return navigateTo('/student');
   }

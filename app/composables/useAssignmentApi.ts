@@ -2,6 +2,7 @@ import type { Assignment, AssignmentListResponse } from '@/types/assignment';
 import type { ApiResponseSuccess } from '@/types/common';
 import { ref, computed } from 'vue';
 
+
 export const useAssignmentApi = () => {
   const config = useRuntimeConfig();
   const apiBase = config.public.apiBase;
@@ -13,11 +14,10 @@ export const useAssignmentApi = () => {
     submission_status?: string;
     class_id?: number;
   }) => {
-    return $fetch<ApiResponseSuccess<AssignmentListResponse>>(
+    return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
       `${apiBase}/assignments/list-by-student`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
         params,
       }
     );
@@ -33,11 +33,10 @@ export const useAssignmentApi = () => {
       submission_status?: string;
     }
   ) => {
-    return $fetch<ApiResponseSuccess<AssignmentListResponse>>(
+    return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
       `${apiBase}/assignments/list-by-class?class_id=${classId}`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
         params,
       }
     );
@@ -84,46 +83,70 @@ export const useAssignmentApi = () => {
   };
 
   const fetchAssignmentDetail = (id: number) =>
-    $fetch<ApiResponseSuccess<Assignment>>(`${apiBase}/assignments/${id}`, {
+    apiFetch<ApiResponseSuccess<Assignment>>(`${apiBase}/assignments/${id}`, {
       method: 'GET',
-      headers: getAuthHeader(),
     });
 
-  const createAssignment = (payload: {
-    title: string;
-    description?: string;
-    due_date?: string;
-    subject?: string;
-  }) =>
-    $fetch<ApiResponseSuccess<AssignmentListResponse>>(
+  const createAssignment = (
+    payload:
+      | FormData
+      | {
+          title: string;
+          content?: string;
+          due_date?: string;
+          class_id: number;
+        }
+  ) => {
+    if (payload instanceof FormData) {
+      return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
+        `${apiBase}/assignments`,
+        {
+          method: 'POST',
+          body: payload,
+        }
+      );
+    }
+    
+    return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
       `${apiBase}/assignments`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: { assignment: payload },
       }
     );
+  };
   const updateAssignment = (
     id: number,
-    payload: {
-      title?: string;
-      description?: string;
-      due_date?: string;
-      subject?: string;
+    payload:
+      | FormData
+      | {
+          title?: string;
+          content?: string;
+          due_date?: string;
+          subject?: string;
+        }
+  ) => {
+    if (payload instanceof FormData) {
+      return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
+        `${apiBase}/assignments/${id}`,
+        {
+          method: 'PATCH',
+          body: payload,
+        }
+      );
     }
-  ) =>
-    $fetch<ApiResponseSuccess<AssignmentListResponse>>(
+    
+    return apiFetch<ApiResponseSuccess<AssignmentListResponse>>(
       `${apiBase}/assignments/${id}`,
       {
         method: 'PATCH',
-        headers: getAuthHeader(),
         body: { assignment: payload },
       }
     );
+  };
   const deleteAssignment = (id: number) =>
-    $fetch(`${apiBase}/assignments/${id}`, {
+    apiFetch(`${apiBase}/assignments/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeader(),
     });
 
   return {

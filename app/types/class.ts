@@ -4,14 +4,10 @@
 
 import type { PaginationInfo } from './common';
 
+// Schedule format: { "0": "18:00-19:30", "1": "18:00-19:30", ... }
+// 0 = Monday, 1 = Tuesday, 2 = Wednesday, 3 = Thursday, 4 = Friday, 5 = Saturday, 6 = Sunday
 export interface ClassSchedule {
-  monday?: string;
-  tuesday?: string;
-  wednesday?: string;
-  thursday?: string;
-  friday?: string;
-  saturday?: string;
-  sunday?: string;
+  [key: string]: string; // Key: "0"-"6" (Monday-Sunday), Value: time range like "18:00-19:30"
 }
 
 interface Teacher {
@@ -25,7 +21,7 @@ export interface Class {
   name: string;
   subject: string;
   grade_level: string;
-  fee_per_session: string | number;
+  monthly_tuition_fee: string | number;
   teacher: Teacher | null;
   schedule: ClassSchedule;
   student_count: number;
@@ -39,6 +35,7 @@ export interface StudentClass {
   name: string;
   teacher: string;
   schedule: string;
+  rawSchedule?: Record<string, string>; 
   room: string;
   attended: number;
   totalSessions: number;
@@ -87,7 +84,7 @@ export interface ClassFilterParams {
   search?: string;
   subject?: string;
   grade_level?: string;
-  sort?: 'name' | 'fee_per_session' | 'student_count';
+  sort?: 'name' | 'monthly_tuition_fee' | 'student_count';
   order?: 'asc' | 'desc';
   page?: number;
   limit?: number;

@@ -16,7 +16,10 @@ class UserSerializer
       created_at: user.created_at,
       updated_at: user.updated_at,
       phone_number: user.phone_number,
-      photo_url: user.photo_url
+      photo_url: user.photo_url,
+      teacher_qr_code: user.teacher&.qr_code,
+      is_active: user.is_active,
+      otp_verified: user.otp_verified,
     }
   end
 

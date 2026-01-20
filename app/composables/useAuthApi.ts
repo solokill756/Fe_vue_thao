@@ -3,6 +3,7 @@ import type { UserModel } from 'app/types/user';
 
 interface LoginResponse {
   token: string;
+  refresh_token: string;
   user: UserModel;
 }
 
@@ -27,15 +28,25 @@ export const useAuthApi = () => {
       body: { user: payload },
     });
 
-  const googleLogin = (provider: string) =>
+  const googleLogin = (idToken: string) =>
     $fetch<ApiResponseSuccess<LoginResponse>>(`${apiBase}/auth/google-login`, {
       method: 'POST',
-      params: { provider },
+      body: { user: { id_token: idToken } },
     });
+
+  const refreshToken = (refreshToken: string) =>
+    $fetch<ApiResponseSuccess<{ token: string; refresh_token: string }>>(
+      `${apiBase}/auth/refresh-token`,
+      {
+        method: 'POST',
+        body: { refresh_token: refreshToken },
+      }
+    );
 
   return {
     login,
     register,
     googleLogin,
+    refreshToken,
   };
 };

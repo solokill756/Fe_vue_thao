@@ -26,7 +26,7 @@ class TuitionInvoice < ApplicationRecord
   scope :search_by_title, ->(keyword) { where('title LIKE ?', "%#{keyword}%") }
 
   # Callbacks
-  before_create :generate_invoice_code
+  before_validation :generate_invoice_code, on: :create
 
   # Methods
   def mark_as_paid!(paid_date = Time.current)

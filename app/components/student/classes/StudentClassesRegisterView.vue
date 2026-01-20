@@ -106,7 +106,7 @@
                 {{ $t('student.classes.tuition') }}:</span
               >
               <span class="font-bold text-blue-600"
-                >{{ formatPrice(course.fee_per_session) }} /
+                >{{ formatPrice(course.monthly_tuition_fee) }} /
                 {{ $t('student.classes.month') }}</span
               >
             </div>

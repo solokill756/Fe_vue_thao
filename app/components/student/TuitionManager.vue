@@ -320,8 +320,20 @@
             <div
               class="bg-white p-4 border-2 border-blue-100 rounded-xl inline-block shadow-sm mb-4 relative group"
             >
-              <!-- Fake QR -->
+              <!-- QR Code Image -->
               <div
+                v-if="selectedInvoice?.teacher_qr_code"
+                class="w-48 h-48 bg-white flex items-center justify-center relative overflow-hidden border border-slate-200 rounded"
+              >
+                <img
+                  :src="selectedInvoice.teacher_qr_code"
+                  alt="QR Code"
+                  class="w-full h-full object-contain p-2"
+                />
+              </div>
+              <!-- Fallback if no QR code -->
+              <div
+                v-else
                 class="w-48 h-48 bg-slate-800 flex items-center justify-center text-white relative overflow-hidden"
               >
                 <i class="fa-solid fa-qrcode text-8xl"></i>

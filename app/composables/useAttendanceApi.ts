@@ -1,6 +1,7 @@
 import type { ApiResponseSuccess } from '@/types/common';
 import type { AttendanceSessionsResponse } from '@/types/attendance';
 
+
 export interface AttendanceRecord {
   id: number;
   student_id: number;
@@ -31,21 +32,19 @@ export const useAttendanceApi = () => {
     classId: number,
     params?: { page?: number; per_page?: number }
   ) =>
-    $fetch<ApiResponseSuccess<AttendanceSessionsResponse>>(
+    apiFetch<ApiResponseSuccess<AttendanceSessionsResponse>>(
       `${apiBase}/classes/${classId}/attendance_sessions`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
         params,
       }
     );
 
   const getAttendanceRecords = (classId: number, sessionId: number) =>
-    $fetch<ApiResponseSuccess<AttendanceRecord[]>>(
+    apiFetch<ApiResponseSuccess<AttendanceRecord[]>>(
       `${apiBase}/classes/${classId}/attendance_sessions/${sessionId}/attendance_records`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
       }
     );
 
@@ -59,11 +58,10 @@ export const useAttendanceApi = () => {
       score_in_class?: number;
     }
   ) =>
-    $fetch<ApiResponseSuccess<AttendanceRecord>>(
+    apiFetch<ApiResponseSuccess<AttendanceRecord>>(
       `${apiBase}/classes/${classId}/attendance_sessions/${sessionId}/attendance_records`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: { attendance_record: data },
       }
     );
@@ -78,11 +76,10 @@ export const useAttendanceApi = () => {
       score_in_class?: number;
     }
   ) =>
-    $fetch<ApiResponseSuccess<AttendanceRecord>>(
+    apiFetch<ApiResponseSuccess<AttendanceRecord>>(
       `${apiBase}/classes/${classId}/attendance_sessions/${sessionId}/attendance_records/${recordId}`,
       {
         method: 'PATCH',
-        headers: getAuthHeader(),
         body: { attendance_record: data },
       }
     );

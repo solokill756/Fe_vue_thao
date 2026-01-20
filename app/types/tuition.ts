@@ -21,6 +21,7 @@ export interface TuitionInvoice {
   is_overdue: boolean;
   created_at: string;
   updated_at: string;
+  teacher_qr_code?: string | null;
 }
 
 export interface TuitionHistory {

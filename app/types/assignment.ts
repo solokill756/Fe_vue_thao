@@ -10,7 +10,7 @@ interface SchoolClass {
   created_at: string;
   updated_at: string;
   description?: string;
-  fee_per_session?: string;
+  monthly_tuition_fee?: string;
   status: string;
   cover_image?: string | null;
 }

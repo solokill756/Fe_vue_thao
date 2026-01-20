@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TeacherGrading />
+    <TeacherProfile />
   </div>
 </template>
 

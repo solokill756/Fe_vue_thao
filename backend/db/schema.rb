@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_19_081711) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,7 +40,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
   end
 
   create_table "ai_conversations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "teacher_id", null: false
+    t.bigint "teacher_id", null: false
     t.bigint "context_class_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -112,9 +112,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
-    t.decimal "fee_per_session", precision: 15, scale: 2
     t.string "status", default: "active"
     t.text "cover_image"
+    t.decimal "monthly_tuition_fee", precision: 15, scale: 2
     t.index ["name"], name: "index_classes_on_name"
     t.index ["status"], name: "index_classes_on_status"
     t.index ["teacher_id"], name: "index_classes_on_teacher_id"
@@ -209,7 +209,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
     t.index ["student_id"], name: "index_submissions_on_student_id"
   end
 
-  create_table "teachers", primary_key: "user_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "teachers", primary_key: "user_id", id: :bigint, default: nil, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "bio"
     t.bigint "package_id"
     t.datetime "package_expiry"
@@ -219,6 +219,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
     t.string "qr_code"
     t.index ["package_id"], name: "index_teachers_on_package_id"
     t.index ["qr_code"], name: "index_teachers_on_qr_code", unique: true
+    t.index ["user_id"], name: "index_teachers_on_user_id"
   end
 
   create_table "transactions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -300,7 +301,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_14_131000) do
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "students"
   add_foreign_key "teachers", "packages"
-  add_foreign_key "teachers", "users", primary_key: "user_id"
+  add_foreign_key "teachers", "users"
   add_foreign_key "transactions", "tuition_invoices"
   add_foreign_key "tuition_invoices", "classes"
   add_foreign_key "tuition_invoices", "students"

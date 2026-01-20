@@ -16,6 +16,10 @@ module RailsTutorial
 
     # Auto-load lib folder
     config.eager_load_paths << Rails.root.join("lib")
+    
+    # Auto-load services folder
+    config.autoload_paths << Rails.root.join("app", "services")
+    config.eager_load_paths << Rails.root.join("app", "services")
 
     # Configuration for the application, engines, and railties goes here.
     #

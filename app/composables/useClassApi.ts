@@ -1,6 +1,7 @@
 import type { ClassListResponse } from 'app/types/class';
 import type { ApiResponseSuccess, PaginationInfo } from 'app/types/common';
 
+
 interface ClassParams {
   page: number;
   perPage: number;
@@ -20,6 +21,7 @@ export interface StudentClassResponse {
   status: string;
   tuition_debt: number;
   sessions_attended: number;
+  total_sessions?: number;
   created_at: string;
   updated_at: string;
 }
@@ -34,25 +36,30 @@ export const useClassApi = () => {
   const apiBase = config.public.apiBase;
 
   const fetchClasses = (params: ClassParams) =>
-    $fetch<ApiResponseSuccess<ClassListResponse>>(`${apiBase}/classes`, {
+    apiFetch<ApiResponseSuccess<ClassListResponse>>(`${apiBase}/classes`, {
       method: 'GET',
       params,
-      headers: getAuthHeader(),
     });
 
   const fetchSubjects = () =>
-    $fetch<ApiResponseSuccess<string[]>>(`${apiBase}/classes/subjects`, {
+    apiFetch<ApiResponseSuccess<string[]>>(`${apiBase}/classes/subjects`, {
       method: 'GET',
-      headers: getAuthHeader(),
     });
 
   const fetchStudentClasses = (params?: { page?: number; per_page?: number }) =>
-    $fetch<ApiResponseSuccess<StudentClassesResponse>>(
+    apiFetch<ApiResponseSuccess<StudentClassesResponse>>(
       `${apiBase}/classes/student_class`,
       {
         method: 'GET',
         params,
-        headers: getAuthHeader(),
+      }
+    );
+
+  const fetchStudentClassDetail = (classId: number) =>
+    apiFetch<ApiResponseSuccess<StudentClassResponse>>(
+      `${apiBase}/classes/${classId}/student_class`,
+      {
+        method: 'GET',
       }
     );
 
@@ -60,5 +67,6 @@ export const useClassApi = () => {
     fetchClasses,
     fetchSubjects,
     fetchStudentClasses,
+    fetchStudentClassDetail,
   };
 };

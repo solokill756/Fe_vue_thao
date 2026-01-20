@@ -72,10 +72,10 @@
           </div>
           <div>
             <label class="block text-sm font-bold text-slate-700 mb-1">
-              {{ $t('teacher.classes.createModal.feePerSession') }}
+              {{ $t('teacher.classes.createModal.monthlyTuitionFee') }}
             </label>
             <input
-              v-model.number="formData.fee_per_session"
+              v-model.number="formData.monthly_tuition_fee"
               type="number"
               min="0"
               :placeholder="$t('teacher.classes.settingsTab.feePlaceholder')"
@@ -204,7 +204,7 @@ const formData = ref({
   subject: '',
   grade_level: '',
   description: '',
-  fee_per_session: 0,
+  monthly_tuition_fee: 0,
   schedule: {} as Record<string, { startTime: string; endTime: string }>,
 });
 
@@ -279,7 +279,7 @@ const close = () => {
     subject: '',
     grade_level: '',
     description: '',
-    fee_per_session: 0,
+    monthly_tuition_fee: 0,
     schedule: {},
   };
   errors.value = {};
@@ -307,8 +307,8 @@ const handleCreateClass = async () => {
       payload.description = formData.value.description.trim();
     }
 
-    if (formData.value.fee_per_session) {
-      payload.fee_per_session = formData.value.fee_per_session;
+    if (formData.value.monthly_tuition_fee) {
+      payload.monthly_tuition_fee = formData.value.monthly_tuition_fee;
     }
 
     // Build schedule data - each day can have different times

@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     public: {
       apiBase: process.env.API_BASE || '/api/v1',
       googleClientId:
+        process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID ||
         process.env.GOOGLE_CLIENT_ID ||
         'your-google-client-id.apps.googleusercontent.com',
     },

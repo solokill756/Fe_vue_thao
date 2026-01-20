@@ -106,7 +106,6 @@ const showOtp = ref(false);
 const { t } = useI18n();
 const toast = useToast();
 const { startLoading, stopLoading } = useLoading();
-
 const authStore = useAuthStore();
 const { form, isLogin, toggleMode, resetForm, showPassword } = useAuthForm();
 
@@ -127,7 +126,15 @@ const handleAuthSubmit = async () => {
     if (isLogin.value) {
       await authStore.login(form.email, form.password);
       toast.success(t('auth.messages.loginSuccessMsg'));
-      navigateTo(authStore.role === 'student' ? '/student' : '/teacher');
+      // Redirect based on user role
+      const role = authStore.role;
+      if (role === 'student') {
+        navigateTo('/student');
+      } else if (role === 'admin') {
+        navigateTo('/admin');
+      } else {
+        navigateTo('/teacher');
+      }
     } else {
       const { register } = useAuthApi();
       await register(form);
@@ -151,6 +158,34 @@ const handleOtpSuccess = () => {
   resetForm();
   isLogin.value = true;
   navigateTo('/auth');
+};
+
+const handleGoogleLogin = async (idToken: string) => {
+  if (!idToken) {
+    toast.error(t('auth.messages.googleLoginError') || 'Không thể lấy thông tin từ Google');
+    return;
+  }
+
+  startLoading(t('auth.messages.loggingIn'));
+  try {
+    await authStore.googleLogin(idToken);
+    toast.success(t('auth.messages.loginSuccessMsg'));
+    // Redirect based on user role
+    const role = authStore.role;
+    if (role === 'student') {
+      navigateTo('/student');
+    } else if (role === 'admin') {
+      navigateTo('/admin');
+    } else {
+      navigateTo('/teacher');
+    }
+  } catch (e: any) {
+    console.error('Google login error:', e);
+    const errorMessage = e?.data?.error || e?.message || 'Đăng nhập Google thất bại';
+    toast.error(errorMessage);
+  } finally {
+    stopLoading();
+  }
 };
 </script>
 

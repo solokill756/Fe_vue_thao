@@ -17,6 +17,21 @@ module Api
         )
       end
 
+      # GET /api/v1/classes/:id/student_class
+      def student_class
+        enrollment = Enrollment.find_by(
+          class_id: params[:id].to_i,
+          student_id: @current_user.student_profile.id
+        )
+
+        if enrollment.nil?
+          render_error('Class not found or you are not enrolled in this class', :not_found)
+          return
+        end
+
+        render_success(ClassEnrollmentSerializer.serialize(enrollment), :ok)
+      end
+
       # POST /api/v1/classes/:class_id/enroll
       def enroll_class
         result = ClassEnrollmentService.new.enroll(params[:id].to_i, @current_user.student_profile.id)

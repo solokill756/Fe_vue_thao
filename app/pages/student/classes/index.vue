@@ -122,10 +122,11 @@ const myClasses = computed(() => {
       code: cls.class_id.toString(),
       name: cls.class_name,
       teacher: cls.teacher_name,
-      schedule: formatScheduleObject(cls.schedule),
+      schedule: formatScheduleObject(cls.schedule), // Formatted string for display
+      rawSchedule: cls.schedule, // Raw schedule object for calendar parsing
       room: 'N/A',
       attended: cls.sessions_attended,
-      totalSessions: Object.keys(cls.schedule).length * 4,
+      totalSessions: cls.total_sessions || Object.keys(cls.schedule || {}).length * 4, // Use backend calculated value, fallback to old calculation
       status: cls.status,
       class_id: cls.class_id,
     })) || []

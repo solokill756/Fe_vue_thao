@@ -28,13 +28,24 @@ class User < ApplicationRecord
   scope :active, -> { where(is_active: true) }
 
   # Callbacks
-  before_save :mark_active_if_fully_approved
+  before_save :mark_active_if_fully_approved, unless: :marked_for_destruction?
 
   private
 
   def mark_active_if_fully_approved
+    # Skip if user is being destroyed
+    return if marked_for_destruction? || destroyed?
+    
+    # Only auto-activate when otp_verified changes from false to true
+    # Don't override is_active if it's being explicitly set (e.g., by admin)
     return unless otp_verified?
-
-    self.is_active = true
+    
+    # If is_active is being changed in this save, don't override it (admin is setting it)
+    return if will_save_change_to_is_active?
+    
+    # Only auto-activate if otp_verified was just changed to true
+    if new_record? || saved_change_to_otp_verified?
+      self.is_active = true
+    end
   end
 end

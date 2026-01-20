@@ -42,19 +42,19 @@
                 :class="[
                   'text-[10px] px-1.5 py-0.5 rounded font-bold border',
                   getSessionStatusColor(
-                    student.sessions_attended || 0,
-                    student.total_sessions || 0
+                    student.sessions_attended ?? 0,
+                    student.total_sessions ?? 0
                   ),
                 ]"
                 :title="
                   $t('teacher.attendance.sessionsTooltip', {
-                    attended: student.sessions_attended || 0,
-                    total: student.total_sessions || 0,
+                    attended: student.sessions_attended ?? 0,
+                    total: student.total_sessions ?? 0,
                   })
                 "
               >
-                {{ student.sessions_attended || 0 }}/{{
-                  student.total_sessions || 0
+                {{ student.sessions_attended ?? 0 }}/{{
+                  student.total_sessions ?? 0
                 }}
                 {{ $t('teacher.attendance.sessions') }}
               </span>
@@ -62,8 +62,8 @@
               <i
                 v-if="
                   isRunningLow(
-                    student.sessions_attended || 0,
-                    student.total_sessions || 0
+                    student.sessions_attended ?? 0,
+                    student.total_sessions ?? 0
                   )
                 "
                 class="fa-solid fa-circle-exclamation text-red-500 text-xs animate-pulse"

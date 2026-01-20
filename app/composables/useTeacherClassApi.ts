@@ -12,6 +12,7 @@ export interface TeacherClass {
   status: string;
   subject: string;
   cover_image?: string;
+  raw_schedule?: Record<string, string> | null;
 }
 
 export interface TeacherClassDetail extends TeacherClass {
@@ -25,6 +26,7 @@ export interface TeacherClassDetail extends TeacherClass {
     parent: string;
     student_code?: string;
     sessions_attended?: number;
+    total_sessions?: number;
     avatar?: string;
   }>;
 }
@@ -43,16 +45,15 @@ export const useTeacherClassApi = () => {
     subject: string;
     grade_level?: string;
     description?: string;
-    fee_per_session?: number;
+    monthly_tuition_fee?: number;
     schedule_days?: string[];
     start_time?: string;
     end_time?: string;
   }) =>
-    $fetch<ApiResponseSuccess<TeacherClassDetail>>(
+    apiFetch<ApiResponseSuccess<TeacherClassDetail>>(
       `${apiBase}/teacher/classes`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: data,
       }
     );
@@ -63,26 +64,24 @@ export const useTeacherClassApi = () => {
     status?: string;
     search?: string;
   }) =>
-    $fetch<ApiResponseSuccess<TeacherClassesResponse>>(
+    apiFetch<ApiResponseSuccess<TeacherClassesResponse>>(
       `${apiBase}/teacher/classes`,
       {
         method: 'GET',
         params,
-        headers: getAuthHeader(),
       }
     );
 
   const fetchTeacherClassDetail = (classId: number) =>
-    $fetch<ApiResponseSuccess<TeacherClassDetail>>(
+    apiFetch<ApiResponseSuccess<TeacherClassDetail>>(
       `${apiBase}/teacher/classes/${classId}`,
       {
         method: 'GET',
-        headers: getAuthHeader(),
       }
     );
 
   const fetchPendingRequests = (classId: number) =>
-    $fetch<
+    apiFetch<
       ApiResponseSuccess<{
         enrollments: Array<{
           id: number;
@@ -104,24 +103,21 @@ export const useTeacherClassApi = () => {
       }>
     >(`${apiBase}/teacher/classes/${classId}/pending_requests`, {
       method: 'GET',
-      headers: getAuthHeader(),
     });
 
   const approveEnrollment = (classId: number, enrollmentId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/enrollments/${enrollmentId}/approve`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
       }
     );
 
   const rejectEnrollment = (classId: number, enrollmentId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/enrollments/${enrollmentId}/reject`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
       }
     );
 
@@ -130,11 +126,10 @@ export const useTeacherClassApi = () => {
     leaveRequestId: number,
     teacherNote?: string
   ) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/leave_requests/${leaveRequestId}/approve`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: { teacher_note: teacherNote },
       }
     );
@@ -144,36 +139,33 @@ export const useTeacherClassApi = () => {
     leaveRequestId: number,
     teacherNote?: string
   ) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/leave_requests/${leaveRequestId}/reject`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: { teacher_note: teacherNote },
       }
     );
 
   const addStudent = (classId: number, studentId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/students`,
       {
         method: 'POST',
-        headers: getAuthHeader(),
         body: { student_id: studentId },
       }
     );
 
   const removeStudent = (classId: number, studentId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/students/${studentId}`,
       {
         method: 'DELETE',
-        headers: getAuthHeader(),
       }
     );
 
   const searchStudents = (classId: number, query: string) =>
-    $fetch<
+    apiFetch<
       ApiResponseSuccess<{
         students: Array<{
           id: number;
@@ -186,11 +178,10 @@ export const useTeacherClassApi = () => {
     >(`${apiBase}/teacher/classes/${classId}/search_students`, {
       method: 'GET',
       params: { query },
-      headers: getAuthHeader(),
     });
 
   const fetchClassSchedule = (classId: number) =>
-    $fetch<
+    apiFetch<
       ApiResponseSuccess<{
         fixed_schedule: any;
         upcoming_sessions: Array<{
@@ -205,15 +196,15 @@ export const useTeacherClassApi = () => {
       }>
     >(`${apiBase}/teacher/classes/${classId}/schedule`, {
       method: 'GET',
-      headers: getAuthHeader(),
     });
 
   const createAttendanceSession = (
     classId: number,
     date: string,
+    time?: string,
     teacherNote?: string
   ) =>
-    $fetch<
+    apiFetch<
       ApiResponseSuccess<{
         session: {
           id: number;
@@ -224,40 +215,37 @@ export const useTeacherClassApi = () => {
       }>
     >(`${apiBase}/teacher/classes/${classId}/attendance_sessions`, {
       method: 'POST',
-      headers: getAuthHeader(),
-      body: { date, teacher_note: teacherNote },
+      body: { date, time, teacher_note: teacherNote },
     });
 
   const updateAttendanceSession = (
     classId: number,
     sessionId: number,
     date: string,
+    time?: string,
     teacherNote?: string
   ) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/attendance_sessions/${sessionId}`,
       {
         method: 'PATCH',
-        headers: getAuthHeader(),
-        body: { date, teacher_note: teacherNote },
+        body: { date, time, teacher_note: teacherNote },
       }
     );
 
   const deleteAttendanceSession = (classId: number, sessionId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}/attendance_sessions/${sessionId}`,
       {
         method: 'DELETE',
-        headers: getAuthHeader(),
       }
     );
 
   const updateSchedule = (classId: number, schedule: any) =>
-    $fetch<ApiResponseSuccess<{ message: string; schedule: any }>>(
+    apiFetch<ApiResponseSuccess<{ message: string; schedule: any }>>(
       `${apiBase}/teacher/classes/${classId}/schedule`,
       {
         method: 'PATCH',
-        headers: getAuthHeader(),
         body: { schedule },
       }
     );
@@ -271,41 +259,35 @@ export const useTeacherClassApi = () => {
           subject?: string;
           grade_level?: string;
           description?: string;
-          fee_per_session?: number;
+          monthly_tuition_fee?: number;
           status?: string;
           cover_image?: string;
         }
   ) => {
-    const headers = getAuthHeader();
-
     if (data instanceof FormData) {
-      const { 'Content-Type': _, ...restHeaders } = headers;
-      return $fetch<ApiResponseSuccess<TeacherClassDetail>>(
+      return apiFetch<ApiResponseSuccess<TeacherClassDetail>>(
         `${apiBase}/teacher/classes/${classId}`,
         {
           method: 'PATCH',
-          headers: restHeaders,
           body: data,
         }
       );
     }
 
-    return $fetch<ApiResponseSuccess<TeacherClassDetail>>(
+    return apiFetch<ApiResponseSuccess<TeacherClassDetail>>(
       `${apiBase}/teacher/classes/${classId}`,
       {
         method: 'PATCH',
-        headers: getAuthHeader(),
         body: data,
       }
     );
   };
 
   const deleteClass = (classId: number) =>
-    $fetch<ApiResponseSuccess<{ message: string }>>(
+    apiFetch<ApiResponseSuccess<{ message: string }>>(
       `${apiBase}/teacher/classes/${classId}`,
       {
         method: 'DELETE',
-        headers: getAuthHeader(),
       }
     );
 

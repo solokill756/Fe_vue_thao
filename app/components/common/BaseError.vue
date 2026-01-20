@@ -13,12 +13,12 @@
 
       <!-- Error Title -->
       <h3 class="text-lg font-bold text-red-900 mb-2">
-        {{ title || 'Đã xảy ra lỗi' }}
+        {{ title || $t('common.errors.defaultTitle') }}
       </h3>
 
       <!-- Error Message -->
       <p class="text-sm text-red-700 text-center mb-4 max-w-md">
-        {{ message || 'Không thể tải dữ liệu. Vui lòng thử lại sau.' }}
+        {{ message || $t('common.errors.defaultMessage') }}
       </p>
 
       <!-- Error Details (optional) -->
@@ -26,7 +26,7 @@
         <summary
           class="text-xs text-red-600 cursor-pointer hover:text-red-800 font-medium"
         >
-          Chi tiết lỗi
+          {{ $t('common.errors.errorDetails') }}
         </summary>
         <pre
           class="mt-2 p-3 bg-red-100 rounded text-xs text-red-800 overflow-auto max-h-40"
@@ -41,7 +41,7 @@
         class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
       >
         <i class="fa-solid fa-rotate-right"></i>
-        Thử lại
+        {{ $t('common.errors.retry') }}
       </button>
     </div>
   </transition>

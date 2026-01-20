@@ -4,6 +4,9 @@
   >
     <h2 class="font-bold text-slate-800 text-lg">{{ pageTitle }}</h2>
     <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <CommonLanguageSwitcher />
+
       <button
         class="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-500 relative"
       >
@@ -43,6 +46,7 @@ const pageTitle = computed(() => {
   if (path.startsWith('/teacher/grading')) return 'Chấm bài & Bài tập';
   if (path.startsWith('/teacher/finance')) return 'Quản lý Học phí';
   if (path.startsWith('/teacher/ai')) return 'Trợ lý Ảo';
+  if (path.startsWith('/teacher/profile')) return 'Trang cá nhân';
   return 'Teacher Portal';
 });
 </script>

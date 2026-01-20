@@ -38,16 +38,39 @@ module Api
         render_error 'Unauthorized access', :unauthorized
       end
 
+      def check_admin_role
+        return if @current_user.role == 'admin'
+        render_error 'Unauthorized access. Admin only.', :unauthorized
+      end
+
       private
 
       def authenticate_request!
         header = request.headers['Authorization']
-        header = header.split.last if header
+        token = header.split.last if header
+
+        unless token
+          render_error 'Missing authentication token', :unauthorized
+          return
+        end
 
         begin
-          decoded = JWT.decode(header,
-                               Rails.application.secrets.secret_key_base)[0]
+          decoded = JWT.decode(
+            token,
+            Rails.application.secrets.secret_key_base,
+            true,
+            { algorithm: 'HS256' }
+          )[0]
+          
           @current_user = User.find(decoded['user_id'])
+          
+          # Check if user account is active
+          unless @current_user.is_active?
+            render_error 'Account has been deactivated', :forbidden
+            return
+          end
+        rescue JWT::ExpiredSignature
+          render_error 'Token has expired', :unauthorized
         rescue JWT::DecodeError, ActiveRecord::RecordNotFound
           render_error 'Unauthorized access', :unauthorized
         end
